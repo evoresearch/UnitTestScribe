@@ -17,6 +17,26 @@
             <param name="archiveSubDirectory">the relative path within <paramref name="baseDirectory"/></param>
             <param name="scheduler">the scheduler to use for asynchronous methods</param>
         </member>
+        <member name="P:ABB.SrcML.AbstractArchive.IsEmpty">
+            <summary>
+            Returns true if this archive is empty
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.AbstractArchive.Scheduler">
+            <summary>
+            Task factory for the asynchronous methods
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.AbstractArchive.SupportedExtensions">
+            <summary>
+            the extensions supported by this collection. The strings returned by this property should match the ones returned by <see cref="M:System.IO.Path.GetExtension(System.String)"/>
+            </summary>
+        </member>
+        <member name="E:ABB.SrcML.AbstractArchive.FileChanged">
+            <summary>
+            This event should be raised whenever the archive updates its internal representation for a file
+            </summary>
+        </member>
         <member name="M:ABB.SrcML.AbstractArchive.AddOrUpdateFileImpl(System.String)">
             <summary>
             Sub-classes of AbstractArchive should implement the "add or update file" functionality here in order to enable <see cref="M:ABB.SrcML.AbstractArchive.AddOrUpdateFile(System.String)"/> and <see cref="M:ABB.SrcML.AbstractArchive.AddOrUpdateFileAsync(System.String)"/>
@@ -94,6 +114,11 @@
             </summary>
             <returns>An enumerable of filenames stored in this archive.</returns>
         </member>
+        <member name="P:ABB.SrcML.AbstractArchive.ArchivePath">
+            <summary>
+            The path where this archive is stored.
+            </summary>
+        </member>
         <member name="M:ABB.SrcML.AbstractArchive.OnFileChanged(ABB.SrcML.FileEventRaisedArgs)">
             <summary>
             Raise the FileChanged event.
@@ -109,31 +134,6 @@
         <member name="M:ABB.SrcML.AbstractArchive.Dispose">
             <summary>
             Disposes of this object
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.AbstractArchive.IsEmpty">
-            <summary>
-            Returns true if this archive is empty
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.AbstractArchive.Scheduler">
-            <summary>
-            Task factory for the asynchronous methods
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.AbstractArchive.SupportedExtensions">
-            <summary>
-            the extensions supported by this collection. The strings returned by this property should match the ones returned by <see cref="M:System.IO.Path.GetExtension(System.String)"/>
-            </summary>
-        </member>
-        <member name="E:ABB.SrcML.AbstractArchive.FileChanged">
-            <summary>
-            This event should be raised whenever the archive updates its internal representation for a file
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.AbstractArchive.ArchivePath">
-            <summary>
-            The path where this archive is stored.
             </summary>
         </member>
         <member name="T:ABB.SrcML.AbstractDocument">
@@ -152,19 +152,6 @@
             Initializes a new instance of the <see cref="T:ABB.SrcML.AbstractDocument"/> class based on <paramref name="other"/>.
             </summary>
             <param name="other">The other <see cref="T:ABB.SrcML.AbstractDocument"/> object to copy</param>
-        </member>
-        <member name="M:ABB.SrcML.AbstractDocument.WriteXmlnsAttributes(System.Xml.XmlWriter)">
-            <summary>
-            Write attribute strings for each SrcML namespace to the given XmlWriter. This should be called immediately after XmlWriter.WriteStartElement.
-            </summary>
-            <param name="writer">Instance of XmlWriter to write to.</param>
-        </member>
-        <member name="M:ABB.SrcML.AbstractDocument.getRootAttributes(System.String)">
-            <summary>
-            Gets the root attributes.
-            </summary>
-            <param name="xmlFilePath">The XML file path.</param>
-            <returns>the attributes attached to the root element.</returns>
         </member>
         <member name="P:ABB.SrcML.AbstractDocument.FileName">
             <summary>
@@ -186,6 +173,19 @@
             Get all units that have the "filename" attribute. This uses the <see cref="M:ABB.SrcML.XmlHelper.StreamElements(System.String,System.Xml.Linq.XName,System.Int32)"/> function for low memory overhead,
             unless the document is not compound (and the root unit is the only file unit). In that case, it uses <see cref="M:ABB.SrcML.SrcMLElement.Load(System.String)"/>.
             </summary>
+        </member>
+        <member name="M:ABB.SrcML.AbstractDocument.WriteXmlnsAttributes(System.Xml.XmlWriter)">
+            <summary>
+            Write attribute strings for each SrcML namespace to the given XmlWriter. This should be called immediately after XmlWriter.WriteStartElement.
+            </summary>
+            <param name="writer">Instance of XmlWriter to write to.</param>
+        </member>
+        <member name="M:ABB.SrcML.AbstractDocument.getRootAttributes(System.String)">
+            <summary>
+            Gets the root attributes.
+            </summary>
+            <param name="xmlFilePath">The XML file path.</param>
+            <returns>the attributes attached to the root element.</returns>
         </member>
         <member name="T:ABB.SrcML.AbstractFileMonitor">
             <summary>
@@ -234,6 +234,28 @@
             <summary>
             Calls <see cref="M:ABB.SrcML.AbstractFileMonitor.Dispose(System.Boolean)"/> with false as the argument in case disposal hasn't
             already been done.
+            </summary>
+        </member>
+        <member name="E:ABB.SrcML.AbstractFileMonitor.FileChanged">
+            <summary>
+            Event fires when any of the archives raises their
+            <see cref="E:ABB.SrcML.AbstractArchive.FileChanged"/>.
+            </summary>
+        </member>
+        <member name="E:ABB.SrcML.AbstractFileMonitor.MonitoringStopped">
+            <summary>
+            Event fires when <see cref="M:ABB.SrcML.AbstractFileMonitor.StopMonitoring"/> is completed
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.AbstractFileMonitor.MonitorStoragePath">
+            <summary>
+            The folder where all of the archives can store their data. <see cref="T:ABB.SrcML.AbstractArchive"/>
+            objects can use this as their root folder
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.AbstractFileMonitor.NumberOfAllMonitoredFiles">
+            <summary>
+            Number of the elements in the returned collection from GetFilesFromSource()
             </summary>
         </member>
         <member name="M:ABB.SrcML.AbstractFileMonitor.AddFile(System.String)">
@@ -380,28 +402,6 @@
             <param name="sender">The caller</param>
             <param name="e">The event arguments</param>
         </member>
-        <member name="E:ABB.SrcML.AbstractFileMonitor.FileChanged">
-            <summary>
-            Event fires when any of the archives raises their
-            <see cref="E:ABB.SrcML.AbstractArchive.FileChanged"/>.
-            </summary>
-        </member>
-        <member name="E:ABB.SrcML.AbstractFileMonitor.MonitoringStopped">
-            <summary>
-            Event fires when <see cref="M:ABB.SrcML.AbstractFileMonitor.StopMonitoring"/> is completed
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.AbstractFileMonitor.MonitorStoragePath">
-            <summary>
-            The folder where all of the archives can store their data. <see cref="T:ABB.SrcML.AbstractArchive"/>
-            objects can use this as their root folder
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.AbstractFileMonitor.NumberOfAllMonitoredFiles">
-            <summary>
-            Number of the elements in the returned collection from GetFilesFromSource()
-            </summary>
-        </member>
         <member name="T:ABB.SrcML.AbstractGenerator">
             <summary>
             The abstract generator file takes an input file and creates an output file.
@@ -410,6 +410,11 @@
         <member name="M:ABB.SrcML.AbstractGenerator.#ctor">
             <summary>
             Default constructor for the abstract generator
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.AbstractGenerator.SupportedExtensions">
+            <summary>
+            A list of extensions supported by this generator
             </summary>
         </member>
         <member name="M:ABB.SrcML.AbstractGenerator.Generate(System.String,System.String)">
@@ -425,11 +430,6 @@
             </summary>
             <param name="inputFileName">The input file</param>
             <param name="outputFileName">the output file</param>
-        </member>
-        <member name="P:ABB.SrcML.AbstractGenerator.SupportedExtensions">
-            <summary>
-            A list of extensions supported by this generator
-            </summary>
         </member>
         <member name="T:ABB.SrcML.SrcMLProject">
             <summary>
@@ -451,37 +451,6 @@
              <param name="scheduler">The task scheduler</param>
              <param name="monitor">The file monitor</param>
             <param name="generator">The SrcML generator to use</param>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLProject.SetupMonitor(ABB.SrcML.SrcMLGenerator)">
-            <summary>
-            Wires all of the properties together
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLProject.Update">
-            <summary>
-            Updates the archives based on <see cref="P:ABB.SrcML.SrcMLProject.Monitor"/>
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLProject.UpdateAsync">
-            <summary>
-            Updates the archives asynchronously
-            </summary>
-            <returns>The update task</returns>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLProject.StartMonitoring">
-            <summary>
-            Starts monitoring
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLProject.StopMonitoring">
-            <summary>
-            Stops monitoring
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLProject.Dispose">
-            <summary>
-            Dispose of this SrcML Project object
-            </summary>
         </member>
         <member name="P:ABB.SrcML.SrcMLProject.ErrorLog">
             <summary>
@@ -518,63 +487,42 @@
             The path to store all of the data for this project
             </summary>
         </member>
+        <member name="M:ABB.SrcML.SrcMLProject.SetupMonitor(ABB.SrcML.SrcMLGenerator)">
+            <summary>
+            Wires all of the properties together
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLProject.Update">
+            <summary>
+            Updates the archives based on <see cref="P:ABB.SrcML.SrcMLProject.Monitor"/>
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLProject.UpdateAsync">
+            <summary>
+            Updates the archives asynchronously
+            </summary>
+            <returns>The update task</returns>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLProject.StartMonitoring">
+            <summary>
+            Starts monitoring
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLProject.StopMonitoring">
+            <summary>
+            Stops monitoring
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLProject.Dispose">
+            <summary>
+            Dispose of this SrcML Project object
+            </summary>
+        </member>
         <member name="T:ABB.SrcML.ShortFileNameMapping">
             <summary>
             Maintains a mapping between source file paths and the paths where XML versions are stored.
             The names of the XML files are relatively short to avoid exceeding the Windows file path
             character limit.
-            </summary>
-        </member>
-        <member name="T:ABB.SrcML.AbstractFileNameMapping">
-            <summary>
-            Maintains a mapping between source file paths and their corresponding target file paths.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.AbstractFileNameMapping.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new AbstractFileNameMapping.
-            </summary>
-            <param name="targetDirectory">The directory for the XML files.</param>
-            <param name="targetExtension">The target extension. If the extension has no starting period, one will be added.</param>
-        </member>
-        <member name="M:ABB.SrcML.AbstractFileNameMapping.GetTargetFiles">
-            <summary>
-            Returns all of the files 
-            </summary>
-            <returns>all of the files in <see cref="P:ABB.SrcML.AbstractFileNameMapping.TargetDirectory"/> that have <see cref="P:ABB.SrcML.AbstractFileNameMapping.TargetExtension"/></returns>
-        </member>
-        <member name="M:ABB.SrcML.AbstractFileNameMapping.GetTargetPath(System.String)">
-            <summary>
-            Returns the path for the XML file mapped to <paramref name="sourcePath"/>.
-            </summary>
-            <param name="sourcePath">The path for the source file.</param>
-            <returns>The full path for an XML file based on <paramref name="sourcePath"/>.</returns>
-        </member>
-        <member name="M:ABB.SrcML.AbstractFileNameMapping.GetSourcePath(System.String)">
-            <summary>
-            Returns the path where the source file for <paramref name="targetPath"/> is located.
-            </summary>
-            <param name="targetPath">The path for the XML file.</param>
-            <returns>The full path for the source file that <paramref name="targetPath"/> is based on.</returns>
-        </member>
-        <member name="M:ABB.SrcML.AbstractFileNameMapping.SaveMapping">
-            <summary>
-            Saves the file name mapping to the XmlDirectory.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.AbstractFileNameMapping.Dispose">
-            <summary>
-            Disposes of this file name mapping
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.AbstractFileNameMapping.TargetDirectory">
-            <summary>
-            The directory where the target files should be located.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.AbstractFileNameMapping.TargetExtension">
-            <summary>
-            The extension to use for the target files. This will always have a starting period.
             </summary>
         </member>
         <member name="F:ABB.SrcML.ShortFileNameMapping.mappingFile">
@@ -661,13 +609,6 @@
             The parent directory that caused the exception.
             </summary>
         </member>
-        <member name="M:ABB.SrcML.ForbiddenDirectoryException.#ctor(System.String,System.String)">
-            <summary>
-            Create a new forbidden directory exception
-            </summary>
-            <param name="directory">The forbidden directory</param>
-            <param name="reason">The reason it is forbidden</param>
-        </member>
         <member name="P:ABB.SrcML.ForbiddenDirectoryException.Directory">
             <summary>
             The forbidden directory
@@ -677,6 +618,13 @@
             <summary>
             The reason the directory is forbidden
             </summary>
+        </member>
+        <member name="M:ABB.SrcML.ForbiddenDirectoryException.#ctor(System.String,System.String)">
+            <summary>
+            Create a new forbidden directory exception
+            </summary>
+            <param name="directory">The forbidden directory</param>
+            <param name="reason">The reason it is forbidden</param>
         </member>
         <member name="T:ABB.SrcML.Extensions">
             <summary>
@@ -814,6 +762,11 @@
             <param name="defaultArchive">The default archive</param>
             <param name="otherArchives">Other archives to register</param>
         </member>
+        <member name="P:ABB.SrcML.FileSystemFolderMonitor.FullFolderPath">
+            <summary>
+            The full path to the folder being monitored
+            </summary>
+        </member>
         <member name="M:ABB.SrcML.FileSystemFolderMonitor.StartMonitoring">
             <summary>
             Start monitoring
@@ -879,16 +832,16 @@
             Sets up the internal file system monitor
             </summary>
         </member>
-        <member name="P:ABB.SrcML.FileSystemFolderMonitor.FullFolderPath">
-            <summary>
-            The full path to the folder being monitored
-            </summary>
-        </member>
         <member name="T:ABB.SrcML.GeneratorArchive`1">
             <summary>
             keeps track of files by using the provided <see cref="P:ABB.SrcML.GeneratorArchive`1.Generator"/>. The files in the archive have their last-write time set to the corresponding file on disk
             </summary>
             <typeparam name="TGenerator">The generator type for this archive</typeparam>
+        </member>
+        <member name="P:ABB.SrcML.GeneratorArchive`1.Generator">
+            <summary>
+            The generator to use to power this archive
+            </summary>
         </member>
         <member name="M:ABB.SrcML.GeneratorArchive`1.#ctor(System.String,System.String,System.Boolean,`0,ABB.SrcML.AbstractFileNameMapping,System.Threading.Tasks.TaskScheduler)">
             <summary>
@@ -926,6 +879,16 @@
             Gets all of the archived files in this archive.
             </summary>
             <returns>An enumerable of the stored files</returns>
+        </member>
+        <member name="P:ABB.SrcML.GeneratorArchive`1.IsEmpty">
+            <summary>
+            Returns true if this archive is empty
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.GeneratorArchive`1.SupportedExtensions">
+            <summary>
+            The list of extensions supported by the archive (taken from <see cref="P:ABB.SrcML.GeneratorArchive`1.Generator"/>)
+            </summary>
         </member>
         <member name="M:ABB.SrcML.GeneratorArchive`1.AddOrUpdateFileImpl(System.String)">
             <summary>
@@ -990,24 +953,14 @@
             Disposes of the internal <see cref="T:ABB.SrcML.AbstractFileNameMapping"/> and then calls <see cref="M:ABB.SrcML.AbstractArchive.Dispose"/>
             </summary>
         </member>
-        <member name="P:ABB.SrcML.GeneratorArchive`1.Generator">
-            <summary>
-            The generator to use to power this archive
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.GeneratorArchive`1.IsEmpty">
-            <summary>
-            Returns true if this archive is empty
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.GeneratorArchive`1.SupportedExtensions">
-            <summary>
-            The list of extensions supported by the archive (taken from <see cref="P:ABB.SrcML.GeneratorArchive`1.Generator"/>)
-            </summary>
-        </member>
         <member name="T:ABB.SrcML.IsReadyChangedEventArgs">
             <summary>
             Event arguments for IsReady changed events
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.IsReadyChangedEventArgs.ReadyState">
+            <summary>
+            The updated ready state
             </summary>
         </member>
         <member name="M:ABB.SrcML.IsReadyChangedEventArgs.#ctor">
@@ -1020,11 +973,6 @@
             Constructs a new object
             </summary>
             <param name="updatedReadyState">The updated ready state</param>
-        </member>
-        <member name="P:ABB.SrcML.IsReadyChangedEventArgs.ReadyState">
-            <summary>
-            The updated ready state
-            </summary>
         </member>
         <member name="T:ABB.SrcML.Language">
             <summary>
@@ -1088,6 +1036,16 @@
             <param name="baseDirectory">the directory that this archive will be stored in</param>
             <param name="fileName">the filename to store the mapping in</param>
             <param name="scheduler">The task factory to use for asynchronous methods</param>
+        </member>
+        <member name="P:ABB.SrcML.LastModifiedArchive.IsEmpty">
+            <summary>
+            Returns true if there are no entries in this last modified archive
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.LastModifiedArchive.SupportedExtensions">
+            <summary>
+            Returns a collection of all supported file extensions.
+            </summary>
         </member>
         <member name="M:ABB.SrcML.LastModifiedArchive.ContainsFile(System.String)">
             <summary>
@@ -1168,16 +1126,6 @@
             <param name="fileName"></param>
             <returns></returns>
         </member>
-        <member name="P:ABB.SrcML.LastModifiedArchive.IsEmpty">
-            <summary>
-            Returns true if there are no entries in this last modified archive
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.LastModifiedArchive.SupportedExtensions">
-            <summary>
-            Returns a collection of all supported file extensions.
-            </summary>
-        </member>
         <member name="T:ABB.SrcML.LineInfo">
             <summary>
             Class for storing line information for an XNode. LineInfo objects are typically added as annotations to XElements.
@@ -1205,14 +1153,14 @@
             SrcML Namespace for C pre-preprocessor directives.
             </summary>
         </member>
-        <member name="F:ABB.SrcML.CPP.Prefix">
-            <summary>
-            XMLNS prefix for the SrcML CPP namespace
-            </summary>
-        </member>
         <member name="F:ABB.SrcML.CPP.NS">
             <summary>
             XNamespace for the SrcML CPP XML namespace
+            </summary>
+        </member>
+        <member name="F:ABB.SrcML.CPP.Prefix">
+            <summary>
+            XMLNS prefix for the SrcML CPP namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.CPP.Directive">
@@ -1311,24 +1259,14 @@
             The DIFF class contains all of the XNames for SrcML Diff namespace.
             </summary>
         </member>
-        <member name="F:ABB.SrcML.DIFF.Prefix">
-            <summary>
-            XMLNS prefix for the SrcML SRC namespace
-            </summary>
-        </member>
-        <member name="F:ABB.SrcML.DIFF.TypeWhitespace">
-            <summary>
-            The "whitespace" value for <see cref="F:ABB.SrcML.DIFF.TypeAttribute"/>
-            </summary>
-        </member>
-        <member name="F:ABB.SrcML.DIFF.TypeChange">
-            <summary>
-            /// The "change" value for <see cref="F:ABB.SrcML.DIFF.TypeAttribute"/>
-            </summary>
-        </member>
         <member name="F:ABB.SrcML.DIFF.NS">
             <summary>
             XNamespace for the SrcML SRC XML namespace
+            </summary>
+        </member>
+        <member name="F:ABB.SrcML.DIFF.Prefix">
+            <summary>
+            XMLNS prefix for the SrcML SRC namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.DIFF.Insert">
@@ -1351,9 +1289,24 @@
             XName for the "type" attribute. The value of this attribute can be either TypeWhitespace or TypeChange
             </summary>
         </member>
+        <member name="F:ABB.SrcML.DIFF.TypeWhitespace">
+            <summary>
+            The "whitespace" value for <see cref="F:ABB.SrcML.DIFF.TypeAttribute"/>
+            </summary>
+        </member>
+        <member name="F:ABB.SrcML.DIFF.TypeChange">
+            <summary>
+            /// The "change" value for <see cref="F:ABB.SrcML.DIFF.TypeAttribute"/>
+            </summary>
+        </member>
         <member name="T:ABB.SrcML.LIT">
             <summary>
             SrcML Namespace for literals
+            </summary>
+        </member>
+        <member name="F:ABB.SrcML.LIT.NS">
+            <summary>
+            XNamespace for the SrcML Literal XML namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.LIT.Prefix">
@@ -1364,11 +1317,6 @@
         <member name="F:ABB.SrcML.LIT.ArgumentLabel">
             <summary>
             Argument string to pass to one of the srcml executables to enable this namespace
-            </summary>
-        </member>
-        <member name="F:ABB.SrcML.LIT.NS">
-            <summary>
-            XNamespace for the SrcML Literal XML namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.LIT.Literal">
@@ -1383,6 +1331,11 @@
             The operator namespace marks up operators ('-&lt;', '.', '+', '-') with the Operator element.
             </summary>
         </member>
+        <member name="F:ABB.SrcML.OP.NS">
+            <summary>
+            XNamespace for the SrcML Operator XML namespace
+            </summary>
+        </member>
         <member name="F:ABB.SrcML.OP.Prefix">
             <summary>
             XMLNS prefix for the SrcML OP namespace
@@ -1391,11 +1344,6 @@
         <member name="F:ABB.SrcML.OP.ArgumentLabel">
             <summary>
             Argument string to pass to one of the srcml executables to enable this namespace
-            </summary>
-        </member>
-        <member name="F:ABB.SrcML.OP.NS">
-            <summary>
-            XNamespace for the SrcML Operator XML namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.OP.Operator">
@@ -1409,6 +1357,11 @@
             SrcML Namespace for source position.
             </summary>
         </member>
+        <member name="F:ABB.SrcML.POS.NS">
+            <summary>
+            XNamespace for the SrcML Position XML namespace
+            </summary>
+        </member>
         <member name="F:ABB.SrcML.POS.Prefix">
             <summary>
             XMLNS prefix for the SrcML OP namespace
@@ -1417,11 +1370,6 @@
         <member name="F:ABB.SrcML.POS.ArgumentLabel">
             <summary>
             Argument string to pass to one of the srcml executables to enable this namespace
-            </summary>
-        </member>
-        <member name="F:ABB.SrcML.POS.NS">
-            <summary>
-            XNamespace for the SrcML Position XML namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.POS.Line">
@@ -1439,14 +1387,14 @@
             The SRC class contains all of the XNames for SrcML SRC tags.
             </summary>
         </member>
-        <member name="F:ABB.SrcML.SRC.Prefix">
-            <summary>
-            XMLNS prefix for the SrcML SRC namespace
-            </summary>
-        </member>
         <member name="F:ABB.SrcML.SRC.NS">
             <summary>
             XNamespace for the SrcML SRC XML namespace
+            </summary>
+        </member>
+        <member name="F:ABB.SrcML.SRC.Prefix">
+            <summary>
+            XMLNS prefix for the SrcML SRC namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.SRC.Unit">
@@ -1856,9 +1804,17 @@
         <member name="F:ABB.SrcML.SRC.Lock">
             <summary> markup for the lock tag in C# </summary>
         </member>
+        <member name="F:ABB.SrcML.SRC.Annotation">
+            <summary> markup for the attribute tag </summary>
+        </member>
         <member name="T:ABB.SrcML.TYPE">
             <summary>
             SrcML Namespace for C/C++ modifiers
+            </summary>
+        </member>
+        <member name="F:ABB.SrcML.TYPE.NS">
+            <summary>
+            XNamespace for the SrcML Modifier XML namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.TYPE.Prefix">
@@ -1869,11 +1825,6 @@
         <member name="F:ABB.SrcML.TYPE.ArgumentLabel">
             <summary>
             Argument string to pass to one of the srcml executables to enable this namespace
-            </summary>
-        </member>
-        <member name="F:ABB.SrcML.TYPE.NS">
-            <summary>
-            XNamespace for the SrcML Modifier XML namespace
             </summary>
         </member>
         <member name="F:ABB.SrcML.TYPE.Modifier">
@@ -1887,6 +1838,11 @@
             The archive monitor lets you use an archive as a monitoring source.
             </summary>
             <typeparam name="TArchive">The type of the archive to monitor</typeparam>
+        </member>
+        <member name="P:ABB.SrcML.ArchiveMonitor`1.MonitoredArchive">
+            <summary>
+            The archive being monitored
+            </summary>
         </member>
         <member name="M:ABB.SrcML.ArchiveMonitor`1.#ctor(System.String,`0,ABB.SrcML.AbstractArchive,ABB.SrcML.AbstractArchive[])">
             <summary>
@@ -1929,11 +1885,6 @@
             Gets the files kept in <paramref name="MonitoredArchive"/>
             </summary>
             <returns></returns>
-        </member>
-        <member name="P:ABB.SrcML.ArchiveMonitor`1.MonitoredArchive">
-            <summary>
-            The archive being monitored
-            </summary>
         </member>
         <member name="T:ABB.SrcML.SrcMLElement">
             <summary>
@@ -2213,18 +2164,6 @@
             Computes the nubmer of cores available. This is a "conservative" strategy that is meant leave CPU resources free for other processes
             </summary>
         </member>
-        <member name="T:ABB.SrcML.IConcurrencyStrategy">
-            <summary>
-            A concurrency strategy is used to compute the number of available
-            cores for the <see cref="!:LimitedConcurrencyLevelTaskScheduler"/>
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.IConcurrencyStrategy.ComputeAvailableCores">
-            <summary>
-            Returns the number of available cores
-            </summary>
-            <returns>The number of available cores</returns>
-        </member>
         <member name="M:ABB.SrcML.Utilities.ConservativeAbbCoreStrategy.#ctor">
             <summary>
             Creates a new conservative core strategy based on <see cref="P:System.Environment.ProcessorCount"/>
@@ -2274,11 +2213,6 @@
             </summary>
             <param name="parent"></param>
         </member>
-        <member name="M:ABB.SrcML.Utilities.ReadyNotifier.Dispose">
-            <summary>
-            Disposes of this notifier object
-            </summary>
-        </member>
         <member name="P:ABB.SrcML.Utilities.ReadyNotifier.IsReady">
             <summary>
             True if the state is "ready". Changing this value causes <see cref="E:ABB.SrcML.Utilities.ReadyNotifier.IsReadyChanged"/> to fire
@@ -2293,6 +2227,692 @@
             <summary>
             This event fires whenever the value of <see cref="P:ABB.SrcML.Utilities.ReadyNotifier.IsReady"/> changes
             </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadyNotifier.Dispose">
+            <summary>
+            Disposes of this notifier object
+            </summary>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.Base32">
+            <summary>
+            Base32 encoding and decoding.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.Base32.ToBase32String(System.String)">
+            <summary>
+            Converts a string of bytes to a Base32-k string.
+            </summary>
+            <param name="str"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.Base32.ToBase32String(System.Byte[])">
+            <summary>
+            Converts an array of bytes to a Base32-k string.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.Base32.FromBase32String(System.String)">
+            <summary>
+            Converts a Base32-k string into an array of bytes.
+            </summary>
+            <exception cref="T:System.ArgumentException">
+            Input string <paramref name="str">str</paramref> contains invalid Base32-k characters.
+            </exception>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.DefaultsDictionary`2">
+            <summary>
+            DefaultsDictionary is a dictionary that starts with a list of default keys and values.
+            For functions that return only a single key, value, or Key-Value Pair, the method will first check its collection of non-default values. Then, it will check its collection of *default* values.
+            
+            For functions that return a collection or enumerator, the WillReturnDefaultValues flag controls whether or not default values are returned. If false (the default), default values are *not* returned.
+            This means that a DefaultsDictionary that consists of only default Key-Value Pairs will return an empty enumerator/collection.
+            </summary>
+            <typeparam name="TKey">The Key</typeparam>
+            <typeparam name="TValue">The Value</typeparam>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1},System.Boolean)">
+            <summary>
+            Constructs a new defaults dictionary.
+            </summary>
+            <param name="defaultDictionary">the initial dictionary of defaultsDictionary</param>
+            <param name="willReturnDefaultValues">true if it should return default values in collections and enumerators</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
+            <summary>
+            Constructs a new defaults dictionary.
+            WillReturnDefaultValues is set to false by default.
+            </summary>
+            <param name="defaultDictionary">the initial dictionary of defaultsDictionary</param>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.WillReturnDefaultValues">
+            <summary>
+            This boolean determines whether or not enumerators, iterators, etc will return both default and non-default values.
+            If true, then default values will be returned as long as a non-default value is not present.
+            If false, then only changed values will be returned in iterators.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.NonDefaultValueCount">
+            <summary>
+            The number of non-default Key-Value Pairs present in this dictionary.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.DefaultValueCount">
+            <summary>
+            The number of default Key-Value pairs present in this dictionary.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Add(`0,`1)">
+            <summary>
+            Adds the key to the non-default set of key-value pairs
+            </summary>
+            <param name="key">the key to add</param>
+            <param name="value">the value corresponding to the key</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.ContainsKey(`0)">
+            <summary>
+            ContainsKey returns true if there is either a default or non-default key that matches <paramref name="key"/>.
+            </summary>
+            <param name="key">the key to search for</param>
+            <returns>true if the key is present; false otherwise</returns>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.Keys">
+            <summary>
+            If WillReturnDefaultValues is false, this returns the set of non-default keys
+            If true, it returns the union of non-default and default keys
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Remove(`0)">
+            <summary>
+            Removes the given key from the dictionary only if it is not in the initial set of defaults
+            </summary>
+            <param name="key">The key to remove</param>
+            <returns>true if the key was removed</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.TryGetValue(`0,`1@)">
+            <summary>
+            Tries to get the value for the  given key from the set of non-default KVPs and default KVPs.
+            </summary>
+            <param name="key">the key to find</param>
+            <param name="value">the value related to <paramref name="key"/></param>
+            <returns>true  if the Key-Value pair was present, false otherwise.</returns>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.Values">
+            <summary>
+            Returns a list of the default
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.Item(`0)">
+            <summary>
+            Indexer for getting/setting Key-Value Pairs in the dictionary.
+            
+            Setting a Key-Value Pair causes a new non-default KVP to be set.
+            
+            Getting a Key-Value Pair first checks the non-default KVP set, and then checks the default KVP set.
+            </summary>
+            <param name="key">The key to set/get</param>
+            <returns>The value corresponding to the key</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Add(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <summary>
+            Adds a new Key-Value Pair to the non-default set
+            </summary>
+            <param name="item">The Key-Value Pair to add.</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Clear">
+            <summary>
+            Clears the non-default values from the dictionary
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Contains(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <summary>
+            Checks whether or not the given item is present in the dictionary. First, the non-default KVPs are checked, followed by the default KVPs.
+            </summary>
+            <param name="item">The item to check for</param>
+            <returns>True if the item is contained in this dictionary</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.CopyTo(System.Collections.Generic.KeyValuePair{`0,`1}[],System.Int32)">
+            <summary>
+            Copies the Key-Value Pairs to the specified array. If WillReturnDefaultValues is true, then this copies all of the non-default KVPs, followed by any default KVPs.
+            </summary>
+            <param name="array">The array to copy to</param>
+            <param name="arrayIndex">The array index to start copying at</param>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.Count">
+            <summary>
+            The number of Key-Value Pairs in this default dictionary. If WillReturnDefaultValues is true, then this is equal to both default and non-default counts.
+            If WillReturnDefaultValues is false, then Count == NonDefaultValueCount.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.IsReadOnly">
+            <summary>
+            Returns false, as this dictionary is never read-only
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Remove(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <summary>
+            Removes the given Key-Value Pair from the list of non-default Key-Value Pairs; false otherwise.
+            This will return false if the Key-Value Pair is a default value.
+            </summary>
+            <param name="item">The Key-Value pair to remove</param>
+            <returns>true if the item was removed; false otherwise</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.GetEnumerator">
+            <summary>
+            Returns an enumerator over the contents of this dictionary. If WillReturnDefaultValues is true, this will include both default &amp; non-default options.
+            If WillReturnDefaultValues is false, this will include only default options.
+            </summary>
+            <returns>The enumerator</returns>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.ExecutableRunner">
+            <summary>
+            Wrapper class for running executables with given command line arguments
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.ExecutableRunner"/> class.
+            </summary>
+            <param name="applicationDirectory">The application directory.</param>
+            <param name="executableName">Name of the executable.</param>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ExecutableRunner.ExecutableName">
+            <summary>
+            Gets or sets the name of the executable.
+            </summary>
+            <value>
+            The name of the executable.
+            </value>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ExecutableRunner.ApplicationDirectory">
+            <summary>
+            Gets or sets the application directory.
+            </summary>
+            <value>
+            The application directory.
+            </value>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ExecutableRunner.ExecutablePath">
+            <summary>
+            Gets the executable path.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.Run(System.Collections.ObjectModel.Collection{System.String})">
+            <summary>
+            Runs this executable with the specified arguments.
+            </summary>
+            <param name="arguments">The arguments.</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.Run(System.String)">
+            <summary>
+            Runs this executable with the specified argument text.
+            </summary>
+            <param name="argumentText">The argument text.</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.Run(System.Collections.ObjectModel.Collection{System.String},System.String)">
+            <summary>
+            Runs this executable with the specified arguments and additional input passed in on standard input.
+            </summary>
+            <param name="arguments">The arguments.</param>
+            <param name="standardInput">The standard input.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.Run(System.String,System.String)">
+            <summary>
+            Runs this executable with the specified argument text and additional input passed in on standard input.
+            </summary>
+            <param name="argumentText">The argument text.</param>
+            <param name="standardInput">The standard input.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.FileHelper">
+            <summary>
+            FileHelper contains numerous static methods for working with files
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.FileHelper.GetCommonPath(System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            GetCommonPath finds the longest common path for all of the files in
+            <paramref name="filePaths"/>that is
+            <paramref name="startingPoint"/>or a parent of it.
+            </summary>
+            <param name="startingPoint">The starting point to start searching from</param>
+            <param name="filePaths">The enumerable of file paths</param>
+            <returns>The longest path that is common to all
+            <paramref name="filePaths"/>. If it cannot find one, null is returned.</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.FileHelper.GetCommonPath(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Finds the longest common path for all of the files in
+            <paramref name="filePaths"/></summary>
+            <remarks>
+            This calls <see cref="M:ABB.SrcML.Utilities.FileHelper.GetCommonPath(System.String,System.Collections.Generic.IEnumerable{System.String})"/> where the first file
+            in
+            <paramref name="filePaths"/>is used as the starting point
+            </remarks>
+            <param name="filePaths">The enumerable of file paths</param>
+            <returns>The longest path that is common to all
+            <paramref name="filePaths"/>. If it cannot find one, null is returned.</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.FileHelper.GetCommonPathList(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Finds a list of common paths from the files in
+            <paramref name="filePaths"/></summary>
+            <param name="filePaths">The enumerable of file paths</param>
+            <returns>A list of common paths for all the files
+            <paramref name="filePaths"/>. If it cannot find any paths, an empty list is returned.</returns>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.KsuAdapter">
+            <summary>
+            Collection of functions for working with the Kent State SrcML executables
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.KsuAdapter.MakeArgumentString(System.Collections.ObjectModel.Collection{System.String})">
+            <summary>
+            Combine the strings into a space seperated list that can be passed to a Process.
+            </summary>
+            <param name="arguments">the arguments to be combined</param>
+            <returns>the arguments combined into a string, separated by spaces</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.KsuAdapter.GetLanguage(ABB.SrcML.Language)">
+            <summary>
+            Get the string representation of the Language enumeration
+            </summary>
+            <param name="language">a Language value</param>
+            <returns>The string representation of language</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.KsuAdapter.ConvertMappingToString(System.Collections.Generic.IDictionary{System.String,ABB.SrcML.Language})">
+            <summary>
+            Converts an extension mapping dictionary to a string that can be passed to src2srcml.exe.
+            If the extensions begin with a dot, these are stripped to conform with src2srcml.exe's input format.
+            </summary>
+            <param name="extensionMapping">An extension mapping dictionary</param>
+            <returns>A comma separated list of mappings of the form ("EXT=LANG").</returns>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.ReadOnlyDictionary`2">
+            <summary>
+            ReadOnlyDictionary provides a read-only wrapper (similar to ReadOnlyCollection) for dictionaries.
+            If the dictionary is consistently accessed through this class, then NotSupportedExceptions will be thrown whenever the class is modified.
+            </summary>
+            <typeparam name="TKey">The key type</typeparam>
+            <typeparam name="TValue">The value type</typeparam>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
+            <summary>
+            Create a new ReadOnlyDictionary that with the given dictionary
+            </summary>
+            <param name="dictionary">The dictionary to provide a read-only interface for</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Add(`0,`1)">
+            <summary>
+            Not supported
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.ContainsKey(`0)">
+            <summary>
+            True if this dictionary contains <paramref name="key"/>
+            </summary>
+            <param name="key">the key to check for</param>
+            <returns>true if present; false otherwise</returns>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Keys">
+            <summary>
+            a collection of the keys in this dictionary
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Remove(`0)">
+            <summary>
+            Not supported
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.TryGetValue(`0,`1@)">
+            <summary>
+            place the value corresponding to <paramref name="key"/> into <paramref name="value"/>.
+            </summary>
+            <param name="key">The key to search for</param>
+            <param name="value">the out parameter to place the result in</param>
+            <returns>true if the key is present; false otherwise</returns>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Values">
+            <summary>
+            a collection of the values in this dictionary
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Item(`0)">
+            <summary>
+            Returns the value corresponding to the key
+            The Setter is not supported.
+            </summary>
+            <param name="key">The key to search for</param>
+            <returns>the value corresponding to <paramref name="key"/></returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Add(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <summary>
+            Not supported
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Clear">
+            <summary>
+            Not supported
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Contains(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <summary>
+            Tests whether or not the Key-Value Pair <paramref name="item"/> is contained in this dictionary
+            </summary>
+            <param name="item">the key-value pair to check for</param>
+            <returns>true if present; false otherwise</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.CopyTo(System.Collections.Generic.KeyValuePair{`0,`1}[],System.Int32)">
+            <summary>
+            Copies the contents of this dictionary to <paramref name="array"/>, starting at <paramref name="arrayIndex"/>
+            </summary>
+            <param name="array">The array to copy the Key-Value Pairs to</param>
+            <param name="arrayIndex">The index to start copying to</param>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Count">
+            <summary>
+            Returns the number of Key-Value Pairs in this dictionary
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.IsReadOnly">
+            <summary>
+            Returns true, as this dictionary is always read-only
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Remove(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <summary>
+            Not supported
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.GetEnumerator">
+            <summary>
+            Returns an enumerator over the Key-Value Pairs in this dictionary
+            </summary>
+            <returns>An Enumerator</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator over the Key-Value Pairs in this dictionary
+            </summary>
+            <returns>An Enumerator</returns>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.ReentrantTimer">
+            <summary>
+            <para>The reentrant timer provides a reentrant aware timer similar to the example provided in <see cref="M:System.Timers.Timer.Stop"/>.
+            It provides an interface very similar to Timer. It is not, however, a direct sub-class.</para>
+            <para>It operates in a similar fashion to the Timer class. If you subscribe to the <see cref="E:ABB.SrcML.Utilities.ReentrantTimer.Elapsed"/> method, your event handler will
+            execute every <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Interval"/>. It differs from <see cref="T:System.Timers.Timer"/> in that the event handlers will only execute if they are not already
+            executing.</para>
+            <para>ReentrantTimer provides an additional method: <see cref="M:ABB.SrcML.Utilities.ReentrantTimer.ExecuteWhenIdle(System.Action)"/>. This method will wait for the timer to become idle
+            before trying to execute the specified action.</para>
+            </summary>
+        </member>
+        <member name="E:ABB.SrcML.Utilities.ReentrantTimer.Elapsed">
+            <summary>
+            A client can subscribe to this event in order to execute in <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Interval"/>. If <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.AutoReset"/> is set to false, then this event
+            will be raised only once. Elapsed will not execute if either of the following are currently executing:
+            <list type="ordered">
+                <item>A previously raised elapsed event</item>
+                <item>A call to <see cref="M:ABB.SrcML.Utilities.ReentrantTimer.ExecuteWhenIdle(System.Action)"/></item>
+            </list>
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.#ctor(System.Action,System.Threading.Tasks.TaskScheduler)">
+            <summary>
+            Create a reentrant timer with an <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Interval"/> of 100ms.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ReentrantTimer.AutoReset">
+            <summary>
+            If auto reset is set to true, the timer will automatically reset. If false, it will only trigger false.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ReentrantTimer.Enabled">
+            <summary>
+            Setting enabled to true causes the timer to start. Setting it to false causes it to stop.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.ReentrantTimer.Interval">
+            <summary>
+            The interval at which the timer is triggered in milliseconds.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.ExecuteWhenIdle(System.Action)">
+            <summary>
+            Waits for the timer to be idle (i.e. not executing anything) and then executes <paramref name="action"/>
+            </summary>
+            <param name="action">The action to execute</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.Start">
+            <summary>
+            This is identical to setting <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Enabled"/> to true.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.Stop">
+            <summary>
+            This is identical to setting <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Enabled"/> to false.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.Dispose">
+            <summary>
+            Disposes of this object
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.OnElapsed(System.Timers.ElapsedEventArgs)">
+            <summary>
+            Executed when <see cref="E:ABB.SrcML.Utilities.ReentrantTimer.Elapsed"/> is triggered
+            </summary>
+            <param name="e">The event arguments</param>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.SingleCoreStrategy">
+            <summary>
+            Implements the single-core concurrency strategy
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SingleCoreStrategy.ComputeAvailableCores">
+            <summary>
+            The number of available cores is always 1
+            </summary>
+            <returns>1</returns>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.SrcDiffFilter">
+            <summary>
+            A helper class for recovering the before/after version of a SrcML file from SrcDiff output.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcDiffFilter.GetBeforeVersion(System.Xml.Linq.XElement)">
+            <summary>
+            Recovers the "before" SrcML from a SrcDiff representation.
+            </summary>
+            <param name="xml">The root element of the SrcDiff XML to filter.</param>
+            <returns>A copy of the input XML, with the diff elements removed, representing the original file.</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcDiffFilter.GetAfterVersion(System.Xml.Linq.XElement)">
+            <summary>
+            Recovers the "after" SrcML from a SrcDiff representation.
+            </summary>
+            <param name="xml">The root element of the SrcDiff XML to filter.</param>
+            <returns>A copy of the input XML, with the diff elements removed, representing the modified file.</returns>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.SrcMLExceptionFormatter">
+            <summary>
+            Format the exception message
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcMLExceptionFormatter.CreateMessage(System.Exception)">
+            <summary>
+            Return a formatted message string.
+            </summary>
+            <param name="ex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcMLExceptionFormatter.CreateMessage(System.Exception,System.String)">
+            <summary>
+            Return a formatted message string.
+            </summary>
+            <param name="ex"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.SrcMLFileLogger">
+            <summary>
+            File logger for SrcML.NET
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcMLFileLogger.CreateFileLogger(System.String,System.String)">
+            <summary>
+            Create a file logger
+            </summary>
+            <param name="loggerName"></param>
+            <param name="filePath"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.SrcMLFileLogger.DefaultLogger">
+            <summary>
+            Return the default logger
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="innerException">The inner exception.</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor(System.String,System.String,ABB.SrcML.Utilities.ExecutableReturnValue)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
+            </summary>
+            <param name="pathToExecutable">The path to executable.</param>
+            <param name="arguments">The arguments.</param>
+            <param name="returnValue">The return value.</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
+            </summary>
+            <param name="serializationInfo">The serialization info.</param>
+            <param name="context">The context.</param>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.SrcMLRuntimeException.ReturnValue">
+            <summary>
+            Gets the executable return value
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.SrcMLRuntimeException.ErrorMessage">
+            <summary>
+            Gets the error message that corresponds to <see cref="T:ABB.SrcML.Utilities.ExecutableReturnValue"/>
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.SrcMLRuntimeException.ArgumentString">
+            <summary>
+            Gets the argument string passed to the srcML executable
+            </summary>
+        </member>
+        <member name="E:ABB.SrcML.Utilities.TaskManager.IsReadyChanged">
+            <summary>
+            Event fires when the <see cref="P:ABB.SrcML.Utilities.TaskManager.IsReady"/> property changes
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.TaskManager.IsReady">
+            <summary>
+            Archives are "ready" when they have no running tasks. This property automatically changes to false
+            when the number of running tasks is zero. Whenever the value changes, the <see cref="E:ABB.SrcML.Utilities.TaskManager.IsReadyChanged"/> event fires.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.TaskManager.Scheduler">
+            <summary>
+            Task scheduler for the asynchronous methods
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.TaskManager.Run(System.Threading.Tasks.Task)">
+            <summary>
+            Runs the specified action on this thread. The action will be run with the following continuations: <see cref="M:ABB.SrcML.Utilities.TaskManager.DecrementOnCompletion(System.Threading.Tasks.Task)"/> and <see cref="!:LogExceptions"/>
+            </summary>
+            <param name="task">The task to run.</param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.TaskManager.RunAsync(System.Threading.Tasks.Task)">
+            <summary>
+            Runs the specified action on <see cref="T:System.Threading.Tasks.TaskFactory"/>. The action will be run with the following continuations: <see cref="M:ABB.SrcML.Utilities.TaskManager.DecrementOnCompletion(System.Threading.Tasks.Task)"/> and <see cref="!:LogExceptions"/> 
+            </summary>
+            <param name="task"></param>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.TaskManager.DecrementOnCompletion(System.Threading.Tasks.Task)">
+            <summary>
+            Convenience function for adding a continuation that will call <see cref="M:ABB.SrcML.Utilities.TaskManager.DecrementTask"/> upon task completion.
+            </summary>
+            <param name="task"></param>
+        </member>
+        <member name="P:ABB.SrcML.Utilities.TaskManager.CountOfRunningTasks">
+            <summary>
+            The number of tasks that are currently running
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.TaskManager.IncrementTask">
+            <summary>
+            Increments <see cref="P:ABB.SrcML.Utilities.TaskManager.CountOfRunningTasks"/> (called via the <see cref="M:ABB.SrcML.Utilities.TaskManager.Run(System.Threading.Tasks.Task)"/> method). If <see cref="P:ABB.SrcML.Utilities.TaskManager.IsReady"/> is true, this sets it to false.
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.TaskManager.DecrementTask">
+            <summary>
+            Decrements <see cref="P:ABB.SrcML.Utilities.TaskManager.CountOfRunningTasks"/> (called via the <see cref="M:ABB.SrcML.Utilities.TaskManager.DecrementOnCompletion(System.Threading.Tasks.Task)"/> which is used in the <see cref="M:ABB.SrcML.Utilities.TaskManager.Run(System.Threading.Tasks.Task)"/> method.
+            If the number of tasks becomes zero, then <see cref="P:ABB.SrcML.Utilities.TaskManager.IsReady"/> is set to true.
+            </summary>
+        </member>
+        <member name="T:ABB.SrcML.Utilities.VisualStudioProjectReader">
+            <summary>
+            Reader class for reading Visual Studo project files
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.VisualStudioProjectReader.ReadProjectFile(System.String)">
+            <summary>
+            read the source files from the given Visual Studio project
+            </summary>
+            <param name="fileName">the filename for the Visual Studio project</param>
+            <returns>an array of source files</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.VisualStudioProjectReader.ReadCSProject(System.String)">
+            <summary>
+            Parse a C# project file
+            </summary>
+            <param name="fileName">the path to the C# project file</param>
+            <returns>an array of source files</returns>
+        </member>
+        <member name="M:ABB.SrcML.Utilities.VisualStudioProjectReader.ReadVCProject(System.String)">
+            <summary>
+            Parse a Visual C++ projecct file
+            </summary>
+            <param name="fileName">the path to the VC++ project file</param>
+            <returns>an array of source files</returns>
+        </member>
+        <member name="T:ABB.SrcML.IConcurrencyStrategy">
+            <summary>
+            A concurrency strategy is used to compute the number of available
+            cores for the <see cref="!:LimitedConcurrencyLevelTaskScheduler"/>
+            </summary>
+        </member>
+        <member name="M:ABB.SrcML.IConcurrencyStrategy.ComputeAvailableCores">
+            <summary>
+            Returns the number of available cores
+            </summary>
+            <returns>The number of available cores</returns>
         </member>
         <member name="T:ABB.SrcML.SrcMLFileNameMapping">
             <summary>
@@ -2324,7 +2944,7 @@
         <member name="T:ABB.SrcML.DirectoryScanningMonitor">
             <summary>
             The directory scanning monitor scans a collection of directories every
-            <see cref="P:ABB.SrcML.DirectoryScanningMonitor.ScanInterval"/> seconds for source changes and updates the appropriate
+            <see cref="P:ABB.SrcML.DirectoryScanningMonitor.ScanInterval" /> seconds for source changes and updates the appropriate
             <see cref="T:ABB.SrcML.AbstractArchive">archives</see>. <para>The directory scanning monitor lets you
             periodically scan a set of folders and </para>
             </summary>
@@ -2376,6 +2996,25 @@
             monitor</param>
             <param name="defaultArchive">The default archive to use</param>
             <param name="otherArchives">Other archives for specific extensions</param>
+        </member>
+        <member name="P:ABB.SrcML.DirectoryScanningMonitor.MonitoredDirectories">
+            <summary>
+            A read only collection of the directories being monitored. <para>Use
+            <see cref="M:ABB.SrcML.DirectoryScanningMonitor.AddDirectory(System.String)"/> to add a directory and
+            <see cref="M:ABB.SrcML.DirectoryScanningMonitor.RemoveDirectory(System.String)"/> to remove one.</para>
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.DirectoryScanningMonitor.ScanInterval">
+            <summary>
+            The scan interval is the number of seconds between each scan. By default it is set to
+            60.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.DirectoryScanningMonitor.MonitoredDirectoriesFilePath">
+            <summary>
+            the file path to save the list of directories to when <see cref="M:ABB.SrcML.DirectoryScanningMonitor.WriteMonitoringList"/>
+            is called.
+            </summary>
         </member>
         <member name="M:ABB.SrcML.DirectoryScanningMonitor.AddDirectoriesFromSaveFile">
             <summary>
@@ -2458,25 +3097,6 @@
             <param name="directory">The directory to get a full path for.</param>
             <returns>The full path for <paramref name="directory"/>, with a trailing directory separator.</returns>
         </member>
-        <member name="P:ABB.SrcML.DirectoryScanningMonitor.MonitoredDirectories">
-            <summary>
-            A read only collection of the directories being monitored. <para>Use
-            <see cref="M:ABB.SrcML.DirectoryScanningMonitor.AddDirectory(System.String)"/> to add a directory and
-            <see cref="M:ABB.SrcML.DirectoryScanningMonitor.RemoveDirectory(System.String)"/> to remove one.</para>
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.DirectoryScanningMonitor.ScanInterval">
-            <summary>
-            The scan interval is the number of seconds between each scan. By default it is set to
-            60.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.DirectoryScanningMonitor.MonitoredDirectoriesFilePath">
-            <summary>
-            the file path to save the list of directories to when <see cref="M:ABB.SrcML.DirectoryScanningMonitor.WriteMonitoringList"/>
-            is called.
-            </summary>
-        </member>
         <member name="T:ABB.SrcML.Src2SrcMLRunner2">
             <summary>
             Simpler version of <see cref="T:ABB.SrcML.Src2SrcMLRunner"/>. This is a thin wrapper around the src2srcml executable from KSU.
@@ -2497,6 +3117,16 @@
             Constructs a new object with <see cref="P:ABB.SrcML.Src2SrcMLRunner2.ApplicationDirectory"/> set to <paramref name="applicationDirectory"/>
             </summary>
             <param name="applicationDirectory">The directory that contains <see cref="F:ABB.SrcML.Src2SrcMLRunner2.Src2SrcMLExecutableName">src2srcml.exe</see></param>
+        </member>
+        <member name="P:ABB.SrcML.Src2SrcMLRunner2.ApplicationDirectory">
+            <summary>
+            the application directory
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.Src2SrcMLRunner2.ExecutablePath">
+            <summary>
+            The full path to src2srcml.exe.
+            </summary>
         </member>
         <member name="M:ABB.SrcML.Src2SrcMLRunner2.GenerateSrcMLFromFile(System.String,System.String,ABB.SrcML.Language,System.Collections.ObjectModel.Collection{System.String},System.Collections.Generic.Dictionary{System.String,ABB.SrcML.Language})">
             <summary>
@@ -2580,19 +3210,24 @@
             <param name="fileName">The file name</param>
             <returns>The file name, surrounded with double quotes</returns>
         </member>
-        <member name="P:ABB.SrcML.Src2SrcMLRunner2.ApplicationDirectory">
-            <summary>
-            the application directory
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Src2SrcMLRunner2.ExecutablePath">
-            <summary>
-            The full path to src2srcml.exe.
-            </summary>
-        </member>
         <member name="T:ABB.SrcML.SrcMLGenerator">
             <summary>
             The SrcML Generator class provides a convenient wrapper for multiple <see cref="T:ABB.SrcML.Src2SrcMLRunner2">src2srcml runners</see>, each targetted at a different language.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.SrcMLGenerator.ExtensionMapping">
+            <summary>
+            Maps file extensions to the languages they will be parsed as.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.SrcMLGenerator.NonDefaultExecutables">
+            <summary>
+            Maps Languages to the Src2SrcMLRunner that will parse it, if different from the default.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.SrcMLGenerator.SupportedLanguages">
+            <summary>
+            The languages that can be parsed by this SrcMLGenerator.
             </summary>
         </member>
         <member name="M:ABB.SrcML.SrcMLGenerator.#ctor">
@@ -2719,21 +3354,6 @@
             <param name="language">The language to parse the string as. Language.Any is not valid.</param>
             <returns>XML representing the source.</returns>
         </member>
-        <member name="P:ABB.SrcML.SrcMLGenerator.ExtensionMapping">
-            <summary>
-            Maps file extensions to the languages they will be parsed as.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.SrcMLGenerator.NonDefaultExecutables">
-            <summary>
-            Maps Languages to the Src2SrcMLRunner that will parse it, if different from the default.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.SrcMLGenerator.SupportedLanguages">
-            <summary>
-            The languages that can be parsed by this SrcMLGenerator.
-            </summary>
-        </member>
         <member name="T:ABB.SrcML.ITransform">
             <summary>
             Interface for SrcML transformations.
@@ -2814,126 +3434,6 @@
             <summary>
             Utility class for running src2srcml.exe
             </summary>
-        </member>
-        <member name="T:ABB.SrcML.SrcMLRunner">
-            <summary>
-            Abstract class for controlling srcml executables (src2srcml, srcml2src, and srcdiff).
-            </summary>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.ExecutableRunner">
-            <summary>
-            Wrapper class for running executables with given command line arguments
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.#ctor(System.String,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.ExecutableRunner"/> class.
-            </summary>
-            <param name="applicationDirectory">The application directory.</param>
-            <param name="executableName">Name of the executable.</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.Run(System.Collections.ObjectModel.Collection{System.String})">
-            <summary>
-            Runs this executable with the specified arguments.
-            </summary>
-            <param name="arguments">The arguments.</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.Run(System.String)">
-            <summary>
-            Runs this executable with the specified argument text.
-            </summary>
-            <param name="argumentText">The argument text.</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.Run(System.Collections.ObjectModel.Collection{System.String},System.String)">
-            <summary>
-            Runs this executable with the specified arguments and additional input passed in on standard input.
-            </summary>
-            <param name="arguments">The arguments.</param>
-            <param name="standardInput">The standard input.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ExecutableRunner.Run(System.String,System.String)">
-            <summary>
-            Runs this executable with the specified argument text and additional input passed in on standard input.
-            </summary>
-            <param name="argumentText">The argument text.</param>
-            <param name="standardInput">The standard input.</param>
-            <returns></returns>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ExecutableRunner.ExecutableName">
-            <summary>
-            Gets or sets the name of the executable.
-            </summary>
-            <value>
-            The name of the executable.
-            </value>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ExecutableRunner.ApplicationDirectory">
-            <summary>
-            Gets or sets the application directory.
-            </summary>
-            <value>
-            The application directory.
-            </value>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ExecutableRunner.ExecutablePath">
-            <summary>
-            Gets the executable path.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLRunner.#ctor(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})">
-            <summary>
-            Initializes a new instance of the <see cref="T:ABB.SrcML.SrcMLRunner"/> class.
-            </summary>
-            <param name="applicationDirectory">The application directory.</param>
-            <param name="executableName">Name of the executable.</param>
-            <param name="namespaceArguments">The namespace arguments.</param>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLRunner.#ctor(System.String,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:ABB.SrcML.SrcMLRunner"/> class.
-            </summary>
-            <param name="applicationDirectory">The application directory.</param>
-            <param name="executableName">Name of the executable.</param>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLRunner.Run(System.String,System.Collections.ObjectModel.Collection{System.String})">
-            <summary>
-            Runs this executable and places the output in the specified output file.
-            This executable is run with the following string <c>[this.ExecutablePath] --register-ext [ExtensionMapping] --output=[outputfile] [addititionlArguments]</c>
-            </summary>
-            <param name="outputFile">The output file.</param>
-            <param name="additionalArguments">The additional arguments.</param>
-        </member>
-        <member name="M:ABB.SrcML.SrcMLRunner.Run(System.String,System.Collections.ObjectModel.Collection{System.String},System.Collections.ObjectModel.Collection{System.String})">
-            <summary>
-            Runs this executable and places the output in the specified output file. The inputs are written to a temporary file that is deleted when finished.
-            This executable is run with the following string <c>[this.ExecutablePath] --register-ext [ExtensionMapping] --output=[outputfile] --files-from=[input file] [addititionlArguments]</c>
-            </summary>
-            <param name="outputFile">The output file.</param>
-            <param name="additionalArguments">The additional arguments.</param>
-            <param name="inputs">The inputs.</param>
-        </member>
-        <member name="P:ABB.SrcML.SrcMLRunner.ExtensionMapping">
-            <summary>
-            Mapping of source extensions to their languages.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.SrcMLRunner.TreatHeadersAsCPlusPlus">
-            <summary>
-            Gets or sets a value indicating whether to treat headers (.h files) as C plus plus].
-            If this property is set to <c>false</c>, headers will be treated as C regardless of the language assigned to it
-            </summary>
-            <value>
-            	<c>true</c> if [treat headers as C plus plus]; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:ABB.SrcML.SrcMLRunner.NamespaceArguments">
-            <summary>
-            Gets or sets the list of common namespace arguments
-            </summary>
-            <value>
-            The namespace arguments.
-            </value>
         </member>
         <member name="F:ABB.SrcML.Src2SrcMLRunner.Src2SrcMLExecutableName">
             <summary>
@@ -3074,6 +3574,16 @@
         <member name="F:ABB.SrcML.SrcML.SrcML2SrcExecutableName">
             <summary>executable name for ExtractSourceFile executable</summary>
         </member>
+        <member name="P:ABB.SrcML.SrcML.ExtensionMapping">
+            <summary>
+            Mapping of source extensions to their languages.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.SrcML.DefaultNamespaceArguments">
+            <summary>
+            List of common name space arguments that src2srcml.exe uses to modify its output.
+            </summary>
+        </member>
         <member name="M:ABB.SrcML.SrcML.#ctor">
             <summary>
             Creates a new SrcML object rooted in a default directory. If the SRCMLBINDIR environment variable is set, that is used.
@@ -3084,11 +3594,21 @@
             <seealso cref="M:ABB.SrcML.SrcML.#ctor(System.String)"/>
             </summary>
         </member>
+        <member name="P:ABB.SrcML.SrcML.SrcMLDirectory">
+            <summary>
+            Gets the directory that src2srcml and ExtractSourceFile can be found in
+            </summary>
+        </member>
         <member name="M:ABB.SrcML.SrcML.#ctor(System.String)">
             <summary>
             Creates a new SrcML object rooted in the given directory.
             </summary>
             <param name="binDirectory">The path to the directory containing the SrcML executables.</param>
+        </member>
+        <member name="P:ABB.SrcML.SrcML.NamespaceManager">
+            <summary>
+            Gets the default XmlNamespaceManager that contains all of the SrcML namespaces
+            </summary>
         </member>
         <member name="M:ABB.SrcML.SrcML.GenerateSrcMLFromString(System.String)">
             <summary>
@@ -3282,26 +3802,6 @@
             <param name="exclusionListFile">A list of files to exclude from the SrcML document. If null; exclude no files.</param>
             <returns>A SrcMLFile for <paramref name="xmlFileName"/>.</returns>
         </member>
-        <member name="P:ABB.SrcML.SrcML.ExtensionMapping">
-            <summary>
-            Mapping of source extensions to their languages.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.SrcML.DefaultNamespaceArguments">
-            <summary>
-            List of common name space arguments that src2srcml.exe uses to modify its output.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.SrcML.SrcMLDirectory">
-            <summary>
-            Gets the directory that src2srcml and ExtractSourceFile can be found in
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.SrcML.NamespaceManager">
-            <summary>
-            Gets the default XmlNamespaceManager that contains all of the SrcML namespaces
-            </summary>
-        </member>
         <member name="T:ABB.SrcML.SrcML2SrcRunner">
             <summary>
             Utility class for running srcml2src.exe
@@ -3419,6 +3919,11 @@
             <param name="xmlMapping">The XmlFileNameMapping to use to map source paths to xml file paths.</param>
             <param name="scheduler">The task scheduler to for asynchronous tasks</param>
         </member>
+        <member name="P:ABB.SrcML.SrcMLArchive.FileUnits">
+            <summary>
+            Enumerates over each file in the archive and returns a file unit
+            </summary>
+        </member>
         <member name="M:ABB.SrcML.SrcMLArchive.IsValidFileExtension(System.String)">
             <summary>
             Check if the file extension is in the set of file types that can be processed by SrcML.NET.
@@ -3432,11 +3937,6 @@
             </summary>
             <param name="sourceFilePath">The source file to get the root XElement for.</param>
             <returns>The root XElement of the source file.</returns>
-        </member>
-        <member name="P:ABB.SrcML.SrcMLArchive.FileUnits">
-            <summary>
-            Enumerates over each file in the archive and returns a file unit
-            </summary>
         </member>
         <member name="T:ABB.SrcML.SrcMLFile">
             <summary>
@@ -3455,6 +3955,13 @@
             Instantiates new SrcML file based on the given file.
             </summary>
             <param name="fileName">The file to read from.</param>
+        </member>
+        <member name="P:ABB.SrcML.SrcMLFile.ProjectDirectory">
+            <summary>
+            The project rootUnit directory for this SrcMLFile.
+            </summary>
+            <value>The ProjectDirectory property gets &amp; sets the rootUnit directory for this
+            SrcMLFile.</value>
         </member>
         <member name="M:ABB.SrcML.SrcMLFile.WriteXmlnsAttributes(System.Xml.XmlWriter)">
             <summary>
@@ -3499,7 +4006,7 @@
             against each file in a SrcML document
             </summary>
             <param name="transform">The transform object with the
-            see cref="ITransform.Query"/&gt;</param>
+            see cref="ITransform.Query"/></param>
             <returns>yields each node that matches the query in
             <paramref name="transform"/></returns>
         </member>
@@ -3537,7 +4044,7 @@
             Writes this SrcML file to
             <paramref name="fileName"/>without making any changes. <para>This is identical to
             <c>srcmlDoc.Save(fileName, Enumerable.Empty&lt;XElement&gt;()</c></para>
-            <seealso cref="M:System.Linq.Enumerable.Empty``1"/>
+            <seealso cref="M:System.Linq.Enumerable.Empty``1" />
             </summary>
             <param name="fileName">the file to write to. If it exists it will be deleted and
             replaced.</param>
@@ -3554,13 +4061,6 @@
             Writes the document back to the current file <see cref="P:ABB.SrcML.AbstractDocument.FileName"/>.
             <seealso cref="M:ABB.SrcML.SrcMLFile.Write(System.String)"/>
             </summary>
-        </member>
-        <member name="P:ABB.SrcML.SrcMLFile.ProjectDirectory">
-            <summary>
-            The project rootUnit directory for this SrcMLFile.
-            </summary>
-            <value>The ProjectDirectory property gets &amp; sets the rootUnit directory for this
-            SrcMLFile.</value>
         </member>
         <member name="T:ABB.SrcML.SrcMLHelper">
             <summary>
@@ -3585,6 +4085,65 @@
             </summary>
             <param name="extensionDirectory"></param>
             <returns></returns>
+        </member>
+        <member name="T:ABB.SrcML.SrcMLRunner">
+            <summary>
+            Abstract class for controlling srcml executables (src2srcml, srcml2src, and srcdiff).
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.SrcMLRunner.ExtensionMapping">
+            <summary>
+            Mapping of source extensions to their languages.
+            </summary>
+        </member>
+        <member name="P:ABB.SrcML.SrcMLRunner.TreatHeadersAsCPlusPlus">
+            <summary>
+            Gets or sets a value indicating whether to treat headers (.h files) as C plus plus].
+            If this property is set to <c>false</c>, headers will be treated as C regardless of the language assigned to it
+            </summary>
+            <value>
+            	<c>true</c> if [treat headers as C plus plus]; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:ABB.SrcML.SrcMLRunner.NamespaceArguments">
+            <summary>
+            Gets or sets the list of common namespace arguments
+            </summary>
+            <value>
+            The namespace arguments.
+            </value>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLRunner.#ctor(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:ABB.SrcML.SrcMLRunner"/> class.
+            </summary>
+            <param name="applicationDirectory">The application directory.</param>
+            <param name="executableName">Name of the executable.</param>
+            <param name="namespaceArguments">The namespace arguments.</param>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLRunner.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ABB.SrcML.SrcMLRunner"/> class.
+            </summary>
+            <param name="applicationDirectory">The application directory.</param>
+            <param name="executableName">Name of the executable.</param>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLRunner.Run(System.String,System.Collections.ObjectModel.Collection{System.String})">
+            <summary>
+            Runs this executable and places the output in the specified output file.
+            This executable is run with the following string <c>[this.ExecutablePath] --register-ext [ExtensionMapping] --output=[outputfile] [addititionlArguments]</c>
+            </summary>
+            <param name="outputFile">The output file.</param>
+            <param name="additionalArguments">The additional arguments.</param>
+        </member>
+        <member name="M:ABB.SrcML.SrcMLRunner.Run(System.String,System.Collections.ObjectModel.Collection{System.String},System.Collections.ObjectModel.Collection{System.String})">
+            <summary>
+            Runs this executable and places the output in the specified output file. The inputs are written to a temporary file that is deleted when finished.
+            This executable is run with the following string <c>[this.ExecutablePath] --register-ext [ExtensionMapping] --output=[outputfile] --files-from=[input file] [addititionlArguments]</c>
+            </summary>
+            <param name="outputFile">The output file.</param>
+            <param name="additionalArguments">The additional arguments.</param>
+            <param name="inputs">The inputs.</param>
         </member>
         <member name="T:ABB.SrcML.Query">
             <summary>
@@ -3651,613 +4210,57 @@
             <param name="transform">The transform containing the <see cref="M:ABB.SrcML.ITransform.Transform(System.Xml.Linq.XElement)"/>.</param>
             <returns>The list of transformed nodes.</returns>
         </member>
-        <member name="T:ABB.SrcML.Utilities.Base32">
+        <member name="T:ABB.SrcML.AbstractFileNameMapping">
             <summary>
-            Base32 encoding and decoding.
+            Maintains a mapping between source file paths and their corresponding target file paths.
             </summary>
         </member>
-        <member name="M:ABB.SrcML.Utilities.Base32.ToBase32String(System.String)">
+        <member name="P:ABB.SrcML.AbstractFileNameMapping.TargetDirectory">
             <summary>
-            Converts a string of bytes to a Base32-k string.
+            The directory where the target files should be located.
             </summary>
-            <param name="str"></param>
-            <returns></returns>
         </member>
-        <member name="M:ABB.SrcML.Utilities.Base32.ToBase32String(System.Byte[])">
+        <member name="P:ABB.SrcML.AbstractFileNameMapping.TargetExtension">
             <summary>
-            Converts an array of bytes to a Base32-k string.
+            The extension to use for the target files. This will always have a starting period.
             </summary>
         </member>
-        <member name="M:ABB.SrcML.Utilities.Base32.FromBase32String(System.String)">
+        <member name="M:ABB.SrcML.AbstractFileNameMapping.#ctor(System.String,System.String)">
             <summary>
-            Converts a Base32-k string into an array of bytes.
+            Creates a new AbstractFileNameMapping.
             </summary>
-            <exception cref="T:System.ArgumentException">
-            Input string <paramref name="str">str</paramref> contains invalid Base32-k characters.
-            </exception>
+            <param name="targetDirectory">The directory for the XML files.</param>
+            <param name="targetExtension">The target extension. If the extension has no starting period, one will be added.</param>
         </member>
-        <member name="T:ABB.SrcML.Utilities.DefaultsDictionary`2">
+        <member name="M:ABB.SrcML.AbstractFileNameMapping.GetTargetFiles">
             <summary>
-            DefaultsDictionary is a dictionary that starts with a list of default keys and values.
-            For functions that return only a single key, value, or Key-Value Pair, the method will first check its collection of non-default values. Then, it will check its collection of *default* values.
-            
-            For functions that return a collection or enumerator, the WillReturnDefaultValues flag controls whether or not default values are returned. If false (the default), default values are *not* returned.
-            This means that a DefaultsDictionary that consists of only default Key-Value Pairs will return an empty enumerator/collection.
+            Returns all of the files 
             </summary>
-            <typeparam name="TKey">The Key</typeparam>
-            <typeparam name="TValue">The Value</typeparam>
+            <returns>all of the files in <see cref="P:ABB.SrcML.AbstractFileNameMapping.TargetDirectory"/> that have <see cref="P:ABB.SrcML.AbstractFileNameMapping.TargetExtension"/></returns>
         </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1},System.Boolean)">
+        <member name="M:ABB.SrcML.AbstractFileNameMapping.GetTargetPath(System.String)">
             <summary>
-            Constructs a new defaults dictionary.
+            Returns the path for the XML file mapped to <paramref name="sourcePath"/>.
             </summary>
-            <param name="defaultDictionary">the initial dictionary of defaultsDictionary</param>
-            <param name="willReturnDefaultValues">true if it should return default values in collections and enumerators</param>
+            <param name="sourcePath">The path for the source file.</param>
+            <returns>The full path for an XML file based on <paramref name="sourcePath"/>.</returns>
         </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
+        <member name="M:ABB.SrcML.AbstractFileNameMapping.GetSourcePath(System.String)">
             <summary>
-            Constructs a new defaults dictionary.
-            WillReturnDefaultValues is set to false by default.
+            Returns the path where the source file for <paramref name="targetPath"/> is located.
             </summary>
-            <param name="defaultDictionary">the initial dictionary of defaultsDictionary</param>
+            <param name="targetPath">The path for the XML file.</param>
+            <returns>The full path for the source file that <paramref name="targetPath"/> is based on.</returns>
         </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Add(`0,`1)">
+        <member name="M:ABB.SrcML.AbstractFileNameMapping.SaveMapping">
             <summary>
-            Adds the key to the non-default set of key-value pairs
+            Saves the file name mapping to the XmlDirectory.
             </summary>
-            <param name="key">the key to add</param>
-            <param name="value">the value corresponding to the key</param>
         </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.ContainsKey(`0)">
+        <member name="M:ABB.SrcML.AbstractFileNameMapping.Dispose">
             <summary>
-            ContainsKey returns true if there is either a default or non-default key that matches <paramref name="key"/>.
+            Disposes of this file name mapping
             </summary>
-            <param name="key">the key to search for</param>
-            <returns>true if the key is present; false otherwise</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Remove(`0)">
-            <summary>
-            Removes the given key from the dictionary only if it is not in the initial set of defaults
-            </summary>
-            <param name="key">The key to remove</param>
-            <returns>true if the key was removed</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.TryGetValue(`0,`1@)">
-            <summary>
-            Tries to get the value for the  given key from the set of non-default KVPs and default KVPs.
-            </summary>
-            <param name="key">the key to find</param>
-            <param name="value">the value related to <paramref name="key"/></param>
-            <returns>true  if the Key-Value pair was present, false otherwise.</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Add(System.Collections.Generic.KeyValuePair{`0,`1})">
-            <summary>
-            Adds a new Key-Value Pair to the non-default set
-            </summary>
-            <param name="item">The Key-Value Pair to add.</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Clear">
-            <summary>
-            Clears the non-default values from the dictionary
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Contains(System.Collections.Generic.KeyValuePair{`0,`1})">
-            <summary>
-            Checks whether or not the given item is present in the dictionary. First, the non-default KVPs are checked, followed by the default KVPs.
-            </summary>
-            <param name="item">The item to check for</param>
-            <returns>True if the item is contained in this dictionary</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.CopyTo(System.Collections.Generic.KeyValuePair{`0,`1}[],System.Int32)">
-            <summary>
-            Copies the Key-Value Pairs to the specified array. If WillReturnDefaultValues is true, then this copies all of the non-default KVPs, followed by any default KVPs.
-            </summary>
-            <param name="array">The array to copy to</param>
-            <param name="arrayIndex">The array index to start copying at</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.Remove(System.Collections.Generic.KeyValuePair{`0,`1})">
-            <summary>
-            Removes the given Key-Value Pair from the list of non-default Key-Value Pairs; false otherwise.
-            This will return false if the Key-Value Pair is a default value.
-            </summary>
-            <param name="item">The Key-Value pair to remove</param>
-            <returns>true if the item was removed; false otherwise</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.DefaultsDictionary`2.GetEnumerator">
-            <summary>
-            Returns an enumerator over the contents of this dictionary. If WillReturnDefaultValues is true, this will include both default &amp; non-default options.
-            If WillReturnDefaultValues is false, this will include only default options.
-            </summary>
-            <returns>The enumerator</returns>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.WillReturnDefaultValues">
-            <summary>
-            This boolean determines whether or not enumerators, iterators, etc will return both default and non-default values.
-            If true, then default values will be returned as long as a non-default value is not present.
-            If false, then only changed values will be returned in iterators.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.NonDefaultValueCount">
-            <summary>
-            The number of non-default Key-Value Pairs present in this dictionary.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.DefaultValueCount">
-            <summary>
-            The number of default Key-Value pairs present in this dictionary.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.Keys">
-            <summary>
-            If WillReturnDefaultValues is false, this returns the set of non-default keys
-            If true, it returns the union of non-default and default keys
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.Values">
-            <summary>
-            Returns a list of the default
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.Item(`0)">
-            <summary>
-            Indexer for getting/setting Key-Value Pairs in the dictionary.
-            
-            Setting a Key-Value Pair causes a new non-default KVP to be set.
-            
-            Getting a Key-Value Pair first checks the non-default KVP set, and then checks the default KVP set.
-            </summary>
-            <param name="key">The key to set/get</param>
-            <returns>The value corresponding to the key</returns>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.Count">
-            <summary>
-            The number of Key-Value Pairs in this default dictionary. If WillReturnDefaultValues is true, then this is equal to both default and non-default counts.
-            If WillReturnDefaultValues is false, then Count == NonDefaultValueCount.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.DefaultsDictionary`2.IsReadOnly">
-            <summary>
-            Returns false, as this dictionary is never read-only
-            </summary>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.FileHelper">
-            <summary>
-            FileHelper contains numerous static methods for working with files
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.FileHelper.GetCommonPath(System.String,System.Collections.Generic.IEnumerable{System.String})">
-            <summary>
-            GetCommonPath finds the longest common path for all of the files in
-            <paramref name="filePaths"/>that is
-            <paramref name="startingPoint"/>or a parent of it.
-            </summary>
-            <param name="startingPoint">The starting point to start searching from</param>
-            <param name="filePaths">The enumerable of file paths</param>
-            <returns>The longest path that is common to all
-            <paramref name="filePaths"/>. If it cannot find one, null is returned.</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.FileHelper.GetCommonPath(System.Collections.Generic.IEnumerable{System.String})">
-            <summary>
-            Finds the longest common path for all of the files in
-            <paramref name="filePaths"/></summary>
-            <remarks>
-            This calls <see cref="M:ABB.SrcML.Utilities.FileHelper.GetCommonPath(System.String,System.Collections.Generic.IEnumerable{System.String})"/> where the first file
-            in
-            <paramref name="filePaths"/>is used as the starting point
-            </remarks>
-            <param name="filePaths">The enumerable of file paths</param>
-            <returns>The longest path that is common to all
-            <paramref name="filePaths"/>. If it cannot find one, null is returned.</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.FileHelper.GetCommonPathList(System.Collections.Generic.IEnumerable{System.String})">
-            <summary>
-            Finds a list of common paths from the files in
-            <paramref name="filePaths"/></summary>
-            <param name="filePaths">The enumerable of file paths</param>
-            <returns>A list of common paths for all the files
-            <paramref name="filePaths"/>. If it cannot find any paths, an empty list is returned.</returns>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.KsuAdapter">
-            <summary>
-            Collection of functions for working with the Kent State SrcML executables
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.KsuAdapter.MakeArgumentString(System.Collections.ObjectModel.Collection{System.String})">
-            <summary>
-            Combine the strings into a space seperated list that can be passed to a Process.
-            </summary>
-            <param name="arguments">the arguments to be combined</param>
-            <returns>the arguments combined into a string, separated by spaces</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.KsuAdapter.GetLanguage(ABB.SrcML.Language)">
-            <summary>
-            Get the string representation of the Language enumeration
-            </summary>
-            <param name="language">a Language value</param>
-            <returns>The string representation of language</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.KsuAdapter.ConvertMappingToString(System.Collections.Generic.IDictionary{System.String,ABB.SrcML.Language})">
-            <summary>
-            Converts an extension mapping dictionary to a string that can be passed to src2srcml.exe.
-            If the extensions begin with a dot, these are stripped to conform with src2srcml.exe's input format.
-            </summary>
-            <param name="extensionMapping">An extension mapping dictionary</param>
-            <returns>A comma separated list of mappings of the form ("EXT=LANG").</returns>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.ReadOnlyDictionary`2">
-            <summary>
-            ReadOnlyDictionary provides a read-only wrapper (similar to ReadOnlyCollection) for dictionaries.
-            If the dictionary is consistently accessed through this class, then NotSupportedExceptions will be thrown whenever the class is modified.
-            </summary>
-            <typeparam name="TKey">The key type</typeparam>
-            <typeparam name="TValue">The value type</typeparam>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
-            <summary>
-            Create a new ReadOnlyDictionary that with the given dictionary
-            </summary>
-            <param name="dictionary">The dictionary to provide a read-only interface for</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Add(`0,`1)">
-            <summary>
-            Not supported
-            </summary>
-            <param name="key"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.ContainsKey(`0)">
-            <summary>
-            True if this dictionary contains <paramref name="key"/>
-            </summary>
-            <param name="key">the key to check for</param>
-            <returns>true if present; false otherwise</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Remove(`0)">
-            <summary>
-            Not supported
-            </summary>
-            <param name="key"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.TryGetValue(`0,`1@)">
-            <summary>
-            place the value corresponding to <paramref name="key"/> into <paramref name="value"/>.
-            </summary>
-            <param name="key">The key to search for</param>
-            <param name="value">the out parameter to place the result in</param>
-            <returns>true if the key is present; false otherwise</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Add(System.Collections.Generic.KeyValuePair{`0,`1})">
-            <summary>
-            Not supported
-            </summary>
-            <param name="item"></param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Clear">
-            <summary>
-            Not supported
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Contains(System.Collections.Generic.KeyValuePair{`0,`1})">
-            <summary>
-            Tests whether or not the Key-Value Pair <paramref name="item"/> is contained in this dictionary
-            </summary>
-            <param name="item">the key-value pair to check for</param>
-            <returns>true if present; false otherwise</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.CopyTo(System.Collections.Generic.KeyValuePair{`0,`1}[],System.Int32)">
-            <summary>
-            Copies the contents of this dictionary to <paramref name="array"/>, starting at <paramref name="arrayIndex"/>
-            </summary>
-            <param name="array">The array to copy the Key-Value Pairs to</param>
-            <param name="arrayIndex">The index to start copying to</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Remove(System.Collections.Generic.KeyValuePair{`0,`1})">
-            <summary>
-            Not supported
-            </summary>
-            <param name="item"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.GetEnumerator">
-            <summary>
-            Returns an enumerator over the Key-Value Pairs in this dictionary
-            </summary>
-            <returns>An Enumerator</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReadOnlyDictionary`2.System#Collections#IEnumerable#GetEnumerator">
-            <summary>
-            Returns an enumerator over the Key-Value Pairs in this dictionary
-            </summary>
-            <returns>An Enumerator</returns>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Keys">
-            <summary>
-            a collection of the keys in this dictionary
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Values">
-            <summary>
-            a collection of the values in this dictionary
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Item(`0)">
-            <summary>
-            Returns the value corresponding to the key
-            The Setter is not supported.
-            </summary>
-            <param name="key">The key to search for</param>
-            <returns>the value corresponding to <paramref name="key"/></returns>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.Count">
-            <summary>
-            Returns the number of Key-Value Pairs in this dictionary
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ReadOnlyDictionary`2.IsReadOnly">
-            <summary>
-            Returns true, as this dictionary is always read-only
-            </summary>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.ReentrantTimer">
-            <summary>
-            <para>The reentrant timer provides a reentrant aware timer similar to the example provided in <see cref="M:System.Timers.Timer.Stop"/>.
-            It provides an interface very similar to Timer. It is not, however, a direct sub-class.</para>
-            <para>It operates in a similar fashion to the Timer class. If you subscribe to the <see cref="E:ABB.SrcML.Utilities.ReentrantTimer.Elapsed"/> method, your event handler will
-            execute every <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Interval"/>. It differs from <see cref="T:System.Timers.Timer"/> in that the event handlers will only execute if they are not already
-            executing.</para>
-            <para>ReentrantTimer provides an additional method: <see cref="M:ABB.SrcML.Utilities.ReentrantTimer.ExecuteWhenIdle(System.Action)"/>. This method will wait for the timer to become idle
-            before trying to execute the specified action.</para>
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.#ctor(System.Action,System.Threading.Tasks.TaskScheduler)">
-            <summary>
-            Create a reentrant timer with an <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Interval"/> of 100ms.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.ExecuteWhenIdle(System.Action)">
-            <summary>
-            Waits for the timer to be idle (i.e. not executing anything) and then executes <paramref name="action"/>
-            </summary>
-            <param name="action">The action to execute</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.Start">
-            <summary>
-            This is identical to setting <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Enabled"/> to true.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.Stop">
-            <summary>
-            This is identical to setting <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Enabled"/> to false.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.Dispose">
-            <summary>
-            Disposes of this object
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.ReentrantTimer.OnElapsed(System.Timers.ElapsedEventArgs)">
-            <summary>
-            Executed when <see cref="E:ABB.SrcML.Utilities.ReentrantTimer.Elapsed"/> is triggered
-            </summary>
-            <param name="e">The event arguments</param>
-        </member>
-        <member name="E:ABB.SrcML.Utilities.ReentrantTimer.Elapsed">
-            <summary>
-            A client can subscribe to this event in order to execute in <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.Interval"/>. If <see cref="P:ABB.SrcML.Utilities.ReentrantTimer.AutoReset"/> is set to false, then this event
-            will be raised only once. Elapsed will not execute if either of the following are currently executing:
-            <list type="ordered">
-                <item>A previously raised elapsed event</item>
-                <item>A call to <see cref="M:ABB.SrcML.Utilities.ReentrantTimer.ExecuteWhenIdle(System.Action)"/></item>
-            </list>
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ReentrantTimer.AutoReset">
-            <summary>
-            If auto reset is set to true, the timer will automatically reset. If false, it will only trigger false.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ReentrantTimer.Enabled">
-            <summary>
-            Setting enabled to true causes the timer to start. Setting it to false causes it to stop.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.ReentrantTimer.Interval">
-            <summary>
-            The interval at which the timer is triggered in milliseconds.
-            </summary>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.SingleCoreStrategy">
-            <summary>
-            Implements the single-core concurrency strategy
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SingleCoreStrategy.ComputeAvailableCores">
-            <summary>
-            The number of available cores is always 1
-            </summary>
-            <returns>1</returns>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.SrcDiffFilter">
-            <summary>
-            A helper class for recovering the before/after version of a SrcML file from SrcDiff output.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcDiffFilter.GetBeforeVersion(System.Xml.Linq.XElement)">
-            <summary>
-            Recovers the "before" SrcML from a SrcDiff representation.
-            </summary>
-            <param name="xml">The root element of the SrcDiff XML to filter.</param>
-            <returns>A copy of the input XML, with the diff elements removed, representing the original file.</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcDiffFilter.GetAfterVersion(System.Xml.Linq.XElement)">
-            <summary>
-            Recovers the "after" SrcML from a SrcDiff representation.
-            </summary>
-            <param name="xml">The root element of the SrcDiff XML to filter.</param>
-            <returns>A copy of the input XML, with the diff elements removed, representing the modified file.</returns>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.SrcMLExceptionFormatter">
-            <summary>
-            Format the exception message
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcMLExceptionFormatter.CreateMessage(System.Exception)">
-            <summary>
-            Return a formatted message string.
-            </summary>
-            <param name="ex"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcMLExceptionFormatter.CreateMessage(System.Exception,System.String)">
-            <summary>
-            Return a formatted message string.
-            </summary>
-            <param name="ex"></param>
-            <param name="message"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.SrcMLFileLogger">
-            <summary>
-            File logger for SrcML.NET
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcMLFileLogger.CreateFileLogger(System.String,System.String)">
-            <summary>
-            Create a file logger
-            </summary>
-            <param name="loggerName"></param>
-            <param name="filePath"></param>
-            <returns></returns>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.SrcMLFileLogger.DefaultLogger">
-            <summary>
-            Return the default logger
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
-            </summary>
-            <param name="message">The message.</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor(System.String,System.Exception)">
-            <summary>
-            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
-            </summary>
-            <param name="message">The message.</param>
-            <param name="innerException">The inner exception.</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor(System.String,System.String,ABB.SrcML.Utilities.ExecutableReturnValue)">
-            <summary>
-            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
-            </summary>
-            <param name="pathToExecutable">The path to executable.</param>
-            <param name="arguments">The arguments.</param>
-            <param name="returnValue">The return value.</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.SrcMLRuntimeException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Initializes a new instance of the <see cref="T:ABB.SrcML.Utilities.SrcMLRuntimeException"/> class.
-            </summary>
-            <param name="serializationInfo">The serialization info.</param>
-            <param name="context">The context.</param>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.SrcMLRuntimeException.ReturnValue">
-            <summary>
-            Gets the executable return value
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.SrcMLRuntimeException.ErrorMessage">
-            <summary>
-            Gets the error message that corresponds to <see cref="T:ABB.SrcML.Utilities.ExecutableReturnValue"/>
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.SrcMLRuntimeException.ArgumentString">
-            <summary>
-            Gets the argument string passed to the srcML executable
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.TaskManager.Run(System.Threading.Tasks.Task)">
-            <summary>
-            Runs the specified action on this thread. The action will be run with the following continuations: <see cref="M:ABB.SrcML.Utilities.TaskManager.DecrementOnCompletion(System.Threading.Tasks.Task)"/> and <see cref="!:LogExceptions"/>
-            </summary>
-            <param name="task">The task to run.</param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.TaskManager.RunAsync(System.Threading.Tasks.Task)">
-            <summary>
-            Runs the specified action on <see cref="T:System.Threading.Tasks.TaskFactory"/>. The action will be run with the following continuations: <see cref="M:ABB.SrcML.Utilities.TaskManager.DecrementOnCompletion(System.Threading.Tasks.Task)"/> and <see cref="!:LogExceptions"/> 
-            </summary>
-            <param name="task"></param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.TaskManager.DecrementOnCompletion(System.Threading.Tasks.Task)">
-            <summary>
-            Convenience function for adding a continuation that will call <see cref="M:ABB.SrcML.Utilities.TaskManager.DecrementTask"/> upon task completion.
-            </summary>
-            <param name="task"></param>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.TaskManager.IncrementTask">
-            <summary>
-            Increments <see cref="P:ABB.SrcML.Utilities.TaskManager.CountOfRunningTasks"/> (called via the <see cref="M:ABB.SrcML.Utilities.TaskManager.Run(System.Threading.Tasks.Task)"/> method). If <see cref="P:ABB.SrcML.Utilities.TaskManager.IsReady"/> is true, this sets it to false.
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.TaskManager.DecrementTask">
-            <summary>
-            Decrements <see cref="P:ABB.SrcML.Utilities.TaskManager.CountOfRunningTasks"/> (called via the <see cref="M:ABB.SrcML.Utilities.TaskManager.DecrementOnCompletion(System.Threading.Tasks.Task)"/> which is used in the <see cref="M:ABB.SrcML.Utilities.TaskManager.Run(System.Threading.Tasks.Task)"/> method.
-            If the number of tasks becomes zero, then <see cref="P:ABB.SrcML.Utilities.TaskManager.IsReady"/> is set to true.
-            </summary>
-        </member>
-        <member name="E:ABB.SrcML.Utilities.TaskManager.IsReadyChanged">
-            <summary>
-            Event fires when the <see cref="P:ABB.SrcML.Utilities.TaskManager.IsReady"/> property changes
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.TaskManager.IsReady">
-            <summary>
-            Archives are "ready" when they have no running tasks. This property automatically changes to false
-            when the number of running tasks is zero. Whenever the value changes, the <see cref="E:ABB.SrcML.Utilities.TaskManager.IsReadyChanged"/> event fires.
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.TaskManager.Scheduler">
-            <summary>
-            Task scheduler for the asynchronous methods
-            </summary>
-        </member>
-        <member name="P:ABB.SrcML.Utilities.TaskManager.CountOfRunningTasks">
-            <summary>
-            The number of tasks that are currently running
-            </summary>
-        </member>
-        <member name="T:ABB.SrcML.Utilities.VisualStudioProjectReader">
-            <summary>
-            Reader class for reading Visual Studo project files
-            </summary>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.VisualStudioProjectReader.ReadProjectFile(System.String)">
-            <summary>
-            read the source files from the given Visual Studio project
-            </summary>
-            <param name="fileName">the filename for the Visual Studio project</param>
-            <returns>an array of source files</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.VisualStudioProjectReader.ReadCSProject(System.String)">
-            <summary>
-            Parse a C# project file
-            </summary>
-            <param name="fileName">the path to the C# project file</param>
-            <returns>an array of source files</returns>
-        </member>
-        <member name="M:ABB.SrcML.Utilities.VisualStudioProjectReader.ReadVCProject(System.String)">
-            <summary>
-            Parse a Visual C++ projecct file
-            </summary>
-            <param name="fileName">the path to the VC++ project file</param>
-            <returns>an array of source files</returns>
         </member>
         <member name="T:ABB.SrcML.XmlHelper">
             <summary>

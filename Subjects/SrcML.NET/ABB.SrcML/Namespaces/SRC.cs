@@ -452,5 +452,8 @@ namespace ABB.SrcML {
 
         /// <summary> markup for the lock tag in C# </summary>
         public static readonly XName Lock = NS + "lock";
+
+        /// <summary> markup for the attribute tag </summary>
+        public static readonly XName Annotation = NS + "annotation";
     }
 }

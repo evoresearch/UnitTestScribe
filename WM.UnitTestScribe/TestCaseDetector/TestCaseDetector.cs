@@ -10,8 +10,10 @@ using ABB.SrcML;
 using ABB.SrcML.Data;
 using System.Configuration;
 
-namespace WM.UnitTestScribe.TestCaseDetector {
-    public class TestCaseDetector {
+namespace WM.UnitTestScribe.TestCaseDetector
+{
+    public class TestCaseDetector
+    {
         static int i = 0;
         /// <summary> Subject application location </summary>
         public string LocalProj { get; private set; }
@@ -27,6 +29,8 @@ namespace WM.UnitTestScribe.TestCaseDetector {
 
         /// <summary> The temp directory to store all xml </summary>
         readonly public string TempDir;
+        private string annotationPattern;
+        private string[] testCaseAnnotationNames;
 
 
         /// <summary>
@@ -34,11 +38,14 @@ namespace WM.UnitTestScribe.TestCaseDetector {
         /// </summary>
         /// <param name="localProj"> The subject location</param>
         /// <param name="srcmlloc">Srcml executable file location</param>
-        public TestCaseDetector(string localProj, string srcmlloc) {
+        public TestCaseDetector(string localProj, string srcmlloc)
+        {
             this.LocalProj = localProj;
             this.SrcmlLoc = srcmlloc;
             this.TempDir = Util.CreateTemporalDir(ConfigurationManager.AppSettings["srcMLTestCaseTempFolder"]);
-            this.AllTestCases =  new HashSet<TestCaseID>();
+            this.AllTestCases = new HashSet<TestCaseID>();
+            annotationPattern = ConfigurationManager.AppSettings["testCaseAnnotationPattern"].ToString().ToLower();
+            testCaseAnnotationNames = ConfigurationManager.AppSettings["testCaseAnnotationNames"].ToString().Split(',');
         }
 
 
@@ -46,7 +53,8 @@ namespace WM.UnitTestScribe.TestCaseDetector {
         /// <summary>
         /// Analyzes the project.
         /// </summary>
-        public void AnalysisTestCases() {
+        public void AnalysisTestCases()
+        {
 
             //generate project xml files under tempPath
             Src2XML sx = new Src2XML();
@@ -58,8 +66,10 @@ namespace WM.UnitTestScribe.TestCaseDetector {
 
             Console.WriteLine("Parse XML files... ");
 
-            foreach (var fileName in Directory.GetFiles(this.TempDir)) {
-                if (fileName.EndsWith(".xml")) {
+            foreach (var fileName in Directory.GetFiles(this.TempDir))
+            {
+                if (fileName.EndsWith(".xml"))
+                {
                     try
                     {
                         ParseXMLFile(fileName);
@@ -80,12 +90,15 @@ namespace WM.UnitTestScribe.TestCaseDetector {
         /// Parses the file and extracts all testcaseID.
         /// </summary>
         /// <param name="fileName"></param>
-        private void ParseXMLFile(string fileName) {
+        private void ParseXMLFile(string fileName)
+        {
             XElement elementRoot = XElement.Load(fileName);
             var funcElements = elementRoot.DescendantsAndSelf().Where(e => e.Name == SRC.Function);
-            
-            foreach (var func in funcElements) {
-                if (IsTestCase(func)) {
+
+            foreach (var func in funcElements)
+            {
+                if (IsTestCase(func))
+                {
                     string functionName = GetNameForMethodOrClass(func);
                     var classElement = func.AncestorsAndSelf().FirstOrDefault(e => e.Name == SRC.Class);
                     var className = "";
@@ -102,7 +115,7 @@ namespace WM.UnitTestScribe.TestCaseDetector {
                     //Console.WriteLine(nsName + "  " + className + "  " + functionName);
 
                     i++;
-                   
+
                 }
             }
             //Console.WriteLine("total  : " + i);
@@ -115,7 +128,8 @@ namespace WM.UnitTestScribe.TestCaseDetector {
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
-        private string GetNameForMethodOrClass(XElement element) {
+        private string GetNameForMethodOrClass(XElement element)
+        {
             if (element == null)
                 return "";
             //throw new ArgumentNullException("element");
@@ -135,23 +149,40 @@ namespace WM.UnitTestScribe.TestCaseDetector {
         /// </summary>
         /// <param name="method"></param>
         /// <returns></returns>
-        private bool IsTestCase(XElement method) {
+        private bool IsTestCase(XElement method)
+        {
             var typeEle = method.Element(SRC.Type);
             if (typeEle == null)
                 return false;
-            var attributes = typeEle.Elements(SRC.Attribute);
 
-            foreach (var attribute in attributes) {
+            var attributes = getElements(typeEle);            
+
+            foreach (var attribute in attributes)
+            {
                 var names = attribute.DescendantsAndSelf().Where(e => e.Name == SRC.Name);
-                foreach (var name in names) {
+                foreach (var name in names)
+                {
                     string curName = name.Value;
-                    if (curName == "Test" || curName == "TestCase" || curName == "TestMethod" || curName == "Theory" || curName == "Fact")
+                    if (testCaseAnnotationNames.Contains(curName))
                     {
                         return true;
                     }
                 }
             }
             return false;
+        }
+
+        private IEnumerable<XElement> getElements(XElement typeElement)
+        {
+            
+            switch (annotationPattern)
+            {
+                case "annotation":
+                    return typeElement.Elements(SRC.Annotation);
+                default:
+                    return typeElement.Elements(SRC.Attribute);
+            }
+
         }
 
 
