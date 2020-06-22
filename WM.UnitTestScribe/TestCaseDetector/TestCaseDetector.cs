@@ -105,11 +105,20 @@ namespace WM.UnitTestScribe.TestCaseDetector
                     if (classElement != null)
                         className = GetNameForMethodOrClass(classElement);
 
-                    var nsElement = func.AncestorsAndSelf().FirstOrDefault(e => e.Name == SRC.Namespace);
+                    //noiced that it was difficult to catch package names in Java files by simly using SRC.Package
+                    var nsElement = func.AncestorsAndSelf().FirstOrDefault(e => e.Name == SRC.Namespace || e.Name== SRC.Package || (e.FirstNode.ToString().Contains("<package")));
                     var nsName = "";
                     if (nsElement != null)
-                        nsName = nsElement.Element(SRC.Name).Value;
-
+                    {
+                        if (nsElement.ToString().Contains("package"))
+                        {
+                            nsName = nsElement.Element(SRC.Package).Element(SRC.Name).Value;
+                        }
+                        else
+                        {
+                            nsName = nsElement.Element(SRC.Name).Value;
+                        }
+                    }
 
                     AllTestCases.Add(new TestCaseID(nsName, className, functionName));
                     //Console.WriteLine(nsName + "  " + className + "  " + functionName);
@@ -184,6 +193,8 @@ namespace WM.UnitTestScribe.TestCaseDetector
             }
 
         }
+
+     
 
 
     }
