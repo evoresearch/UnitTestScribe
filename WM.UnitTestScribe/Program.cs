@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.Configuration;
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,11 +23,12 @@ namespace WM.UnitTestScribe {
         //public static readonly string LocalProj = @"D:\Research\myTestSubjects\Callgraph\CallgraphSubject";
         //public static readonly string LocalProj = @"D:\Research\Subjects\google-api-dotnet-client-master";
         //public static readonly string LocalProj = @"D:\Research\Subjects\Sando-master";
-        public static readonly string LocalProj = @"D:\Research\Subjects\SrcML.NET";
+        public static readonly string LocalProj = ConfigurationManager.AppSettings["sourceProjectFolder"];
         //public static readonly string LocalProj = @"D:\Research\Subjects\Glimpse-master";
         /// <summary> SrcML directory location </summary>
-        public static readonly string SrcmlLoc = @"D:\Research\SrcML\";
-        public static readonly string outputLoc = @"c:\temp\test.html";
+        public static readonly string SrcmlLoc = ConfigurationManager.AppSettings["srcMLexeFolder"];
+        public static readonly string outputLoc = ConfigurationManager.AppSettings["srcMLCallGraphOutputFolder"];
+
 
         /// <summary>
         /// Command line testing
@@ -35,7 +37,7 @@ namespace WM.UnitTestScribe {
         static void Main(string[] args) {
             DateTime dt = DateTime.Now;
            //args = new string[] { "hello" };
-           // args = new string[] { "testcases", "--loc", LocalProj, "--srcmlPath", SrcmlLoc }; 
+           args = new string[] { "testcases", "--loc", LocalProj, "--srcmlPath", SrcmlLoc }; 
            //args = new string[] { "summary", "--loc", LocalProj, "--srcmlPath", SrcmlLoc, "--outputLoc",  outputLoc }; 
             var options = new Options();
             string invokedVerb = null;

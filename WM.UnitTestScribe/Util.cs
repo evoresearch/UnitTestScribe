@@ -17,7 +17,32 @@ namespace WM.UnitTestScribe {
             Directory.CreateDirectory(tmpDir);
             return tmpDir;
         }
+        public static string CreateTemporalDir(string directory)
+        {
+            var tmpDir = directory;
+            if (Directory.Exists(directory)) {
+                DeleteDirectory(tmpDir);
+            }
+            Directory.CreateDirectory(tmpDir);
+            return tmpDir;
+        }
 
+        /// <summary>
+        /// Deletes a directory's contents
+        /// </summary>
+        /// <param name="path"></param>
+        public static void DeleteDirectory(string path)
+        {
+            System.IO.DirectoryInfo di = new DirectoryInfo(path);
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+            {
+                dir.Delete(true);
+            }
+        }
 
         /// <summary>
         /// Writes content to the given file

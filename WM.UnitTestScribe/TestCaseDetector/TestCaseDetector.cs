@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using ABB.SrcML;
 using ABB.SrcML.Data;
+using System.Configuration;
 
 namespace WM.UnitTestScribe.TestCaseDetector {
     public class TestCaseDetector {
@@ -36,7 +37,7 @@ namespace WM.UnitTestScribe.TestCaseDetector {
         public TestCaseDetector(string localProj, string srcmlloc) {
             this.LocalProj = localProj;
             this.SrcmlLoc = srcmlloc;
-            this.TempDir = Util.CreateTemporalDir();
+            this.TempDir = Util.CreateTemporalDir(ConfigurationManager.AppSettings["srcMLTestCaseTempFolder"]);
             this.AllTestCases =  new HashSet<TestCaseID>();
         }
 
