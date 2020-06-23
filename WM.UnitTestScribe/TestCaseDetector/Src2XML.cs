@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TeaCap.Propagation;
 
 namespace WM.UnitTestScribe.TestCaseDetector
 {
@@ -34,7 +35,7 @@ namespace WM.UnitTestScribe.TestCaseDetector
             //}
             //use these variables to check that all expected xml files are created
             int xmlFilesToCreate = 0;
-            int xmlFilesCreated = 0;
+            
             string[] alloweExtensions = ConfigurationManager.AppSettings["allowedFileExtensions"].ToString().Split(',');
             foreach (string file in Directory.EnumerateFiles(sourceLoc, "*.*", SearchOption.AllDirectories))
             {
@@ -51,13 +52,10 @@ namespace WM.UnitTestScribe.TestCaseDetector
 
             //before returning, check that all target xml files exist on disk
             
-            do
-            {
-                xmlFilesCreated = (from file in Directory.EnumerateFiles(tempDir, "*.xml", SearchOption.AllDirectories)
-                                          select file).Count() ;
-                Console.Write(".");
-            } while (xmlFilesCreated < xmlFilesToCreate);
-            Console.WriteLine();
+            FileCreationWatcher.filesExpected = xmlFilesToCreate;
+            FileCreationWatcher.folder = tempDir;
+            FileCreationWatcher.Run();
+           
         }
 
 

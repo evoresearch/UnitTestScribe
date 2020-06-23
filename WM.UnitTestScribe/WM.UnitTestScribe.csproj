@@ -72,6 +72,7 @@
     <Compile Include="CallGraph\CGManager.cs" />
     <Compile Include="CallGraph\InvokeCallGraphGenerator.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Propagation\FileCreationWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportGenerator\HomeGenerator.cs" />
     <Compile Include="Stereotype\CSharpMethodAnalyzer.cs" />

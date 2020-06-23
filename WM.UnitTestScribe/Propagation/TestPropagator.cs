@@ -28,8 +28,12 @@ namespace TeaCap.TestPropagator
 
         public void propagate()
         {
+            //get test cases from projects
             detectTestCases();
+            //get missing ones from target
             setMissingTestCases();
+            //get summary of missing testcases i.e. tests under unit
+
         }
         public void detectTestCases()
         {
