@@ -36,7 +36,7 @@ namespace WM.UnitTestScribe.Summary {
             this.LocalProj = localProj;
             this.SrcmlLoc = srcmlloc;
             _testCaseDetector = new TestCaseDetector.TestCaseDetector(localProj, srcmlloc);
-            _testCaseDetector.AnalysisTestCases();
+            _testCaseDetector.AnalyzeTestCases();
 
             AllTestSummary = new HashSet<TestCaseSummary>();
         }
@@ -44,7 +44,7 @@ namespace WM.UnitTestScribe.Summary {
 
         public void AnalyzeSummary() {
             Console.WriteLine("Hello");
-            string dataDir = @"\TESTNAIVE_1.0";
+            
             using (var project = new DataProject<CompleteWorkingSet>(LocalProj, LocalProj, SrcmlLoc))
             {
                 project.Update();

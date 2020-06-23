@@ -14,7 +14,7 @@ using WM.UnitTestScribe.CallGraph;
 using WM.UnitTestScribe.Summary;
 using WM.UnitTestScribe.TestCaseDetector;
 using ABB.SrcML.Data;
-
+using TeaCap.TestPropagator;
 
 namespace WM.UnitTestScribe {
     public class Program {
@@ -24,6 +24,8 @@ namespace WM.UnitTestScribe {
         //public static readonly string LocalProj = @"D:\Research\Subjects\google-api-dotnet-client-master";
         //public static readonly string LocalProj = @"D:\Research\Subjects\Sando-master";
         public static readonly string LocalProj = ConfigurationManager.AppSettings["sourceProjectFolder"];
+        public static readonly string targetProject = ConfigurationManager.AppSettings["targetProjectFolder"];
+        
         //public static readonly string LocalProj = @"D:\Research\Subjects\Glimpse-master";
         /// <summary> SrcML directory location </summary>
         public static readonly string SrcmlLoc = ConfigurationManager.AppSettings["srcMLexeFolder"];
@@ -37,8 +39,8 @@ namespace WM.UnitTestScribe {
         static void Main(string[] args) {
             DateTime dt = DateTime.Now;
            //args = new string[] { "hello" };
-           args = new string[] { "testcases", "--loc", LocalProj, "--srcmlPath", SrcmlLoc }; 
-           //args = new string[] { "summary", "--loc", LocalProj, "--srcmlPath", SrcmlLoc, "--outputLoc",  outputLoc }; 
+           //args = new string[] { "testcases", "--loc", LocalProj, "--srcmlPath", SrcmlLoc }; 
+           args = new string[] { "summary", "--loc", LocalProj, "--srcmlPath", SrcmlLoc, "--outputLoc",  outputLoc }; 
             var options = new Options();
             string invokedVerb = null;
             object invokedVerbOptions = null;
@@ -58,23 +60,25 @@ namespace WM.UnitTestScribe {
             } else if (invokedVerb == "testcases") {
                 var testCaseOp = (TestCaseDetectOptions)invokedVerbOptions;
                 var detector = new TestCaseDetector.TestCaseDetector(testCaseOp.LocationsPath, testCaseOp.SrcMLPath);
-                detector.AnalysisTestCases();
+                detector.AnalyzeTestCases();
                 Console.WriteLine("print testcases");
                 foreach (var testCaseId in detector.AllTestCases) {
                     Console.WriteLine(testCaseId.NamespaceName + "  "+ testCaseId.ClassName + "  " + testCaseId.MethodName);
                 }
             } else if (invokedVerb == "summary") {
                 var SummaryOp = (SummarizeTestOptions)invokedVerbOptions;
-                var summary = new SummaryGenerator(SummaryOp.LocationsPath, SummaryOp.SrcMLPath);
-                Console.WriteLine("This is summary");
-                summary.AnalyzeSummary();
-                summary.GenerateSummary(SummaryOp.OutputLoc);
-                Console.WriteLine("Done!!!!!!  Thanks.");
+                TestPropagator testPropagator = new TestPropagator(LocalProj, targetProject, SrcmlLoc);
+                testPropagator.propagate();
+                //var summary = new SummaryGenerator(SummaryOp.LocationsPath, SummaryOp.SrcMLPath);
+                //Console.WriteLine("This is summary");
+                //summary.AnalyzeSummary();
+                //summary.GenerateSummary(SummaryOp.OutputLoc);
+                //Console.WriteLine("Done!!!!!!  Thanks.");
 
             } else if (invokedVerb == "hello") {
 
                 Console.WriteLine("Hello");
-                string dataDir = @"\TESTNAIVE_1.0";
+                
                 //string proPath = @"C:\Users\boyang.li@us.abb.com\Documents\RunningTest\Input\ConsoleApplication1";
                 //string proPath = @"C:\Users\boyang.li@us.abb.com\Documents\RunningTest\Input\SrcML\ABB.SrcML";
                 using (var project = new DataProject<CompleteWorkingSet>(LocalProj, LocalProj, SrcmlLoc))
@@ -132,7 +136,7 @@ namespace WM.UnitTestScribe {
             [VerbOption("summary", HelpText = "summarize test cases in a project")]
             public SummarizeTestOptions SummaryTestCaseVerb { get; set; }
 
-
+            
             [VerbOption("hello", HelpText = "Print hello for testing")]
             public HelloOptions HelloVerb { get; set; }
 
@@ -189,7 +193,7 @@ namespace WM.UnitTestScribe {
             [Option("outputLoc", Required = true, HelpText = "Summary Output location")]
             public string OutputLoc { get; set; }
         }
-
+      
 
 
         /// <summary>

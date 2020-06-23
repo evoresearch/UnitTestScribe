@@ -38,11 +38,12 @@ namespace WM.UnitTestScribe.TestCaseDetector
         /// </summary>
         /// <param name="localProj"> The subject location</param>
         /// <param name="srcmlloc">Srcml executable file location</param>
-        public TestCaseDetector(string localProj, string srcmlloc)
+        public TestCaseDetector(string localProj, string srcmlloc,string targetProject="source")
         {
             this.LocalProj = localProj;
             this.SrcmlLoc = srcmlloc;
-            this.TempDir = Util.CreateTemporalDir(ConfigurationManager.AppSettings["srcMLTestCaseTempFolder"]);
+            //create temp into 
+            this.TempDir = Util.CreateTemporalDir(); //targetProject == "source"? Util.CreateTemporalDir(ConfigurationManager.AppSettings["srcMLTestCaseTempFolderSourceProject"]): Util.CreateTemporalDir(ConfigurationManager.AppSettings["srcMLTestCaseTempFolderTargetProject"]); 
             this.AllTestCases = new HashSet<TestCaseID>();
             annotationPattern = ConfigurationManager.AppSettings["testCaseAnnotationPattern"].ToString().ToLower();
             testCaseAnnotationNames = ConfigurationManager.AppSettings["testCaseAnnotationNames"].ToString().Split(',');
@@ -53,33 +54,48 @@ namespace WM.UnitTestScribe.TestCaseDetector
         /// <summary>
         /// Analyzes the project.
         /// </summary>
-        public void AnalysisTestCases()
+        public void AnalyzeTestCases()
         {
 
             //generate project xml files under tempPath
             Src2XML sx = new Src2XML();
-            Console.WriteLine("Run SrcML. generating XML files... ");
+            Console.WriteLine("Run SrcML. generating XML files for project {0}... ",LocalProj);
             sx.SourceFolderToXml(this.LocalProj, this.TempDir, this.SrcmlLoc);
             Console.WriteLine("generating XML files is done.");
 
             //Now, TempDir contains all cs files for the project in xml version 
 
-            Console.WriteLine("Parse XML files... ");
+            Console.WriteLine("Parse XML files {0}... ", LocalProj);
 
-            foreach (var fileName in Directory.GetFiles(this.TempDir))
+            foreach (string fileName in Directory.EnumerateFiles(TempDir, "*.xml*", SearchOption.AllDirectories))
             {
-                if (fileName.EndsWith(".xml"))
+                try
                 {
-                    try
-                    {
-                        ParseXMLFile(fileName);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("parse xml file error ");
-                    }
+                    ParseXMLFile(fileName);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("parse xml file error ");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.InnerException!=null?ex.InnerException.Message:"");
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
+            //foreach (var fileName in Directory.GetFiles(this.TempDir))
+            //{
+            //    if (fileName.EndsWith(".xml"))
+            //    {
+            //        try
+            //        {
+            //            ParseXMLFile(fileName);
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            Console.WriteLine("parse xml file error ");
+            //            Console.WriteLine(ex.StackTrace);
+            //        }
+            //    }
+            //}
             //Directory.Delete(TempDir, true);
             Console.WriteLine("done! ");
         }
@@ -92,6 +108,13 @@ namespace WM.UnitTestScribe.TestCaseDetector
         /// <param name="fileName"></param>
         private void ParseXMLFile(string fileName)
         {
+            do
+            {
+
+            } while (Util.IsFileInUse(fileName));
+
+            //Console.WriteLine("File {1} exists: {0}", File.Exists(fileName),fileName);
+            //Console.WriteLine("File is text is: {0}", File.ReadAllText(fileName));
             XElement elementRoot = XElement.Load(fileName);
             var funcElements = elementRoot.DescendantsAndSelf().Where(e => e.Name == SRC.Function);
 
