@@ -15,10 +15,14 @@ using WM.UnitTestScribe.Summary;
 using WM.UnitTestScribe.TestCaseDetector;
 using ABB.SrcML.Data;
 using TeaCap.TestPropagator;
+using TeaCap.GitMining;
+using System.Threading;
+using System.Globalization;
 
 namespace WM.UnitTestScribe {
     public class Program {
-
+        //Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
+        
         /// <summary> Subject application location </summary>
         //public static readonly string LocalProj = @"D:\Research\myTestSubjects\Callgraph\CallgraphSubject";
         //public static readonly string LocalProj = @"D:\Research\Subjects\google-api-dotnet-client-master";
@@ -67,8 +71,10 @@ namespace WM.UnitTestScribe {
                 }
             } else if (invokedVerb == "summary") {
                 var SummaryOp = (SummarizeTestOptions)invokedVerbOptions;
-                TestPropagator testPropagator = new TestPropagator(LocalProj, targetProject, SrcmlLoc);
-                testPropagator.propagate();
+                ProjectCloner projectCloner = new ProjectCloner();
+                projectCloner.cloneRepos();
+                //TestPropagator testPropagator = new TestPropagator(LocalProj, targetProject, SrcmlLoc);
+                //testPropagator.propagate();
                 //var summary = new SummaryGenerator(SummaryOp.LocationsPath, SummaryOp.SrcMLPath);
                 //Console.WriteLine("This is summary");
                 //summary.AnalyzeSummary();
