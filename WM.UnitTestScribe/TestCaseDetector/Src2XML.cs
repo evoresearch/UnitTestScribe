@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TeaCap.Propagation;
 
@@ -37,6 +38,7 @@ namespace WM.UnitTestScribe.TestCaseDetector
             int xmlFilesToCreate = 0;
             
             string[] alloweExtensions = ConfigurationManager.AppSettings["allowedFileExtensions"].ToString().Split(',');
+            DirectoryInfo directoryInfo = new DirectoryInfo(tempDir);
             foreach (string file in Directory.EnumerateFiles(sourceLoc, "*.*", SearchOption.AllDirectories))
             {
                 if (alloweExtensions.Contains(Path.GetExtension(file)))
@@ -51,10 +53,17 @@ namespace WM.UnitTestScribe.TestCaseDetector
             }
 
             //before returning, check that all target xml files exist on disk
-            
-            FileCreationWatcher.filesExpected = xmlFilesToCreate;
-            FileCreationWatcher.folder = tempDir;
-            FileCreationWatcher.Run();
+            int files = 0;
+            do
+            {
+                files = directoryInfo.GetFiles().Length;
+                Console.Write(".");
+                Thread.Sleep(2000);
+            } while (files != xmlFilesToCreate);
+            Console.WriteLine();
+            //FileCreationWatcher.filesExpected = xmlFilesToCreate;
+            //FileCreationWatcher.folder = tempDir;
+            //FileCreationWatcher.Run();
            
         }
 

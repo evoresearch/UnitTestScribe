@@ -71,7 +71,7 @@ namespace WM.UnitTestScribe {
                 }
             } else if (invokedVerb == "summary") {
                 var SummaryOp = (SummarizeTestOptions)invokedVerbOptions;
-                ProjectCloner projectCloner = new ProjectCloner();
+                ProjectCloner projectCloner = new ProjectCloner(SrcmlLoc);
                 projectCloner.cloneRepos();
                 //TestPropagator testPropagator = new TestPropagator(LocalProj, targetProject, SrcmlLoc);
                 //testPropagator.propagate();
