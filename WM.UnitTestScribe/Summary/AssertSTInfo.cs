@@ -421,7 +421,7 @@ namespace WM.UnitTestScribe.Summary
                             isMutatorOrCollaborator = true;
                         }
                     }
-                    if (isMutatorOrCollaborator == false)
+                    if (isMutatorOrCollaborator == false&& call.ParentExpression == null)
                     {
                         continue;
                     }

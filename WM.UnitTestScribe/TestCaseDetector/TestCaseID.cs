@@ -25,5 +25,10 @@ namespace WM.UnitTestScribe.TestCaseDetector {
             this.MethodName = methodName;
         }
 
+        public override string ToString()
+        {
+            return string.Format($"{NamespaceName}.{ClassName}.{MethodName}");
+        }
+
     }
 }

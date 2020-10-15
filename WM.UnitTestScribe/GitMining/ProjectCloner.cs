@@ -10,6 +10,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TeaCap.Propagation;
+using WM.UnitTestScribe.Summary;
 using WM.UnitTestScribe.TestCaseDetector;
 
 namespace TeaCap.GitMining
@@ -26,7 +28,7 @@ namespace TeaCap.GitMining
         string topNForksFile = ConfigurationManager.AppSettings["topNForksFile"];
         private List<ForkedRepo> forkedRepos;
         private List<PullRequest> pullRequests;
-
+        
         public void setForkedRepos()
         {
             forkedRepos = MiningUtility.getForkedRepos(File.ReadAllLines(topNForksFile).ToList());
@@ -42,7 +44,7 @@ namespace TeaCap.GitMining
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
             setForkedRepos();
-            setPullRequests();
+            //setPullRequests();
 
             List<string> projects = new List<string>();
             List<string> parents = new List<string>();
@@ -56,15 +58,14 @@ namespace TeaCap.GitMining
                 projects.Add(repo.ForkName);
             }
             //create list of project names and clone urls
-            Dictionary<string, string> projectURLs = new Dictionary<string, string>();
-            foreach (string project in projects)
-            {
-                PullRequest projectPullRequest = pullRequests.FirstOrDefault(p => (p.SourceRepo == project || p.TargetRepo == project) && p.TargetCloneURL.Contains(project) && !string.IsNullOrWhiteSpace(p.MergeCommitHash));
-                if (projectPullRequest != null)
-                {
-                    projectURLs.Add(project, projectPullRequest.TargetCloneURL);
-                }
-            }
+            //Dictionary<string, string> projectURLs = new Dictionary<string, string>();
+            //foreach (string project in projects)
+            //{
+
+            //    //PullRequest projectPullRequest = pullRequests.FirstOrDefault(p => p.TargetCloneURL.Contains(project)|| p.SourceCloneURL.Contains(project));
+            //    string cloneURL = string.Format($"https://github.com/{project}.git");
+              
+            //}
 
             //check if commands includes detecting test cases
 
@@ -73,25 +74,39 @@ namespace TeaCap.GitMining
             string folderName = ConfigurationManager.AppSettings["clonedProjects"];
             string commands = ConfigurationManager.AppSettings["commands"];
             string clonedProjectsFolder = ConfigurationManager.AppSettings["clonedProjects"];
-            string outputFile = string.Format($"{clonedProjectsFolder}\\testCases_allprojects.csv");
+            string testCasesFile = ConfigurationManager.AppSettings["testsAndUUTFile"];
+            string classesAndMethodsFile = ConfigurationManager.AppSettings["classesAndMethodsFile"];
+
             if (commands.ToLower().Contains("testdetect"))
             {
-
-                if (File.Exists(outputFile))
+                //test cases file
+                if (File.Exists(testCasesFile))
                 {
-                    File.Delete(outputFile);
+                    File.Delete(testCasesFile);
                 }
+                StreamWriter writer = File.AppendText(testCasesFile);
+                writer.WriteLine("project;parent;projectIsFork;testPackage;testClassName;testMethodName;testMethodParameters;uutPackage;uutClassName;uutMethodName;uutMethodParameters");
+                writer.Flush();
+                writer.Close();
+                //all clases and methods file
+                if (File.Exists(classesAndMethodsFile))
+                {
+                    File.Delete(classesAndMethodsFile);
+                }
+                writer = File.AppendText(classesAndMethodsFile);
+                writer.WriteLine("project;parent;projectIsFork;package;className;methodName;methodParameters");
+                writer.Flush();
+                writer.Close();
             }
-            StreamWriter writer = File.AppendText(outputFile);
-            writer.WriteLine("project;parent;projectIsFork;cloneURL;package;className;methodName");
+             
             try
             {
-                foreach (string project in projectURLs.Keys)
+                foreach (string project in projects)
                 {
-                    string projectSHortName = project.Split('/')[1];
+                    //string projectSHortName = project.Split('/')[1];
                     string projectFolder = string.Format($"{folderName}\\{project.Replace("/", "\\")}");
-                    string cloneURL;
-                    projectURLs.TryGetValue(project, out cloneURL);
+                    string cloneURL = string.Format($"https://github.com/{project}.git");
+                    //projectURLs.TryGetValue(project, out cloneURL);
                     //DirectoryInfo directoryInfo = new DirectoryInfo(projectFolder);
                     //if (directoryInfo.Exists)
                     //{
@@ -118,26 +133,16 @@ namespace TeaCap.GitMining
                     {
                         try
                         {
-
-                            Console.WriteLine($"Detecing test cases in {project}");
+                            
                             TestCaseDetector testCaseDetector = new TestCaseDetector(projectFolder, srcMLLocation);
                             testCaseDetector.AnalyzeTestCases();
                             HashSet<TestCaseID> allTestCases = testCaseDetector.AllTestCases;
-
+                            HashSet<TestCaseSummary> projectTestSummary = new HashSet<TestCaseSummary>();
                             //projct parent
                             ForkedRepo repo = forkedRepos.FirstOrDefault(f => f.ForkName == project);
                             string parent = repo == null ? "null" : repo.ParentRepo;
                             bool isFork = repo != null;
-
-
-
-
-                            foreach (TestCaseID testCase in allTestCases)
-                            {
-                                writer.WriteLine($"{project};{parent};{isFork};{cloneURL};{testCase.NamespaceName};{testCase.ClassName};{testCase.MethodName}");
-                                writer.Flush();
-                                Console.WriteLine($"Found {testCase.NamespaceName}.{testCase.ClassName}.{testCase.MethodName}");
-                            }
+                            Utilities.analyzeProjectTestCases(projectFolder, allTestCases, projectTestSummary, srcMLLocation, testCasesFile, classesAndMethodsFile, project, parent, isFork);
 
                         }
                         catch (Exception ex)
@@ -152,7 +157,7 @@ namespace TeaCap.GitMining
                 Console.WriteLine(ex.StackTrace);
             }finally
             {
-                writer.Close();
+                
             }
         }
 

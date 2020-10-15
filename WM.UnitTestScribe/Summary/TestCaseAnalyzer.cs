@@ -107,7 +107,7 @@ namespace WM.UnitTestScribe.Summary {
 
         private int InReturnStmt;
 
-
+        private string language = null;
         /// <summary>
         /// Init the method analyzer and analyze the method automatically
         /// </summary>
@@ -289,19 +289,25 @@ namespace WM.UnitTestScribe.Summary {
         /// </summary>
         /// <param name="st"></param>
         private void AnalyzeOtherStmt(Statement st) {
+
             var exp = st.Content;
             if (exp != null) {
                 //check if it's an assertion
                 var subExps = exp.Components.ToList();
-                if (subExps.Count >= 3) {
+                if(subExps == null||subExps.Count==0)
+                {
+                    subExps = new List<Expression>();
+                    subExps.Add(exp);
+                }
+                if (subExps.Count >= 3||subExps.Count == 1) {//1 is java
                     var nameUse = subExps.ElementAt(0) as NameUse;
-                    if (nameUse != null && nameUse.Name == "Assert") {
+                    if (nameUse != null && (nameUse.Name == "Assert" ||nameUse.Name.Contains("assert"))) {
                         //it's an Assersion
                         var focalVariable = FindCheckingObjectVarDeclariation(subExps);
                         //if (focalVariable != null) {
                         AssertSTInfo assertInfo = new AssertSTInfo(focalVariable, VAssignmentManager, st, Method);
                         this.ListAssertInfo.Add(assertInfo);
-                        Console.WriteLine(assertInfo.ToString());
+                        //MUKE Console.WriteLine(assertInfo.ToString());
                         //}
                         //Console.WriteLine("statement " + st + "    Focal variable : "+ focalVariable.Name);
                     }
@@ -321,7 +327,7 @@ namespace WM.UnitTestScribe.Summary {
                     var arguments = call.Arguments;
                     if (arguments.Count > 0) {
 
-                        if (call.Name == "IsTrue" || call.Name == "IsFalse" || call.Name == "IsNotNull" ||
+                        if (call.Name.StartsWith("assert")|| call.Name == "IsTrue" || call.Name == "IsFalse" || call.Name == "IsNotNull" ||
                             call.Name == "IsNull" || call.Name == "That") {
                             //return the first arg
                             var expArg = arguments.ElementAt(0);

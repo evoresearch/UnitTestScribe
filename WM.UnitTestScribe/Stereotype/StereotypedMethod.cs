@@ -9,8 +9,10 @@ using ABB.SrcML;
 using WM.UnitTestScribe.Stereotype.Rules;
 using WM.UnitTestScribe.Stereotype.Taxonomy;
 
-namespace WM.UnitTestScribe.Stereotype {
-    public class StereotypedMethod {
+namespace WM.UnitTestScribe.Stereotype
+{
+    public class StereotypedMethod
+    {
         /// <summary>
         /// The method SrcML.net
         /// </summary>
@@ -37,10 +39,17 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Use predefined rule collector to analyze the method <param name="method"></param>
         /// </summary>
         /// <param name="method"></param>
-        public StereotypedMethod(MethodDefinition method) {
+        public StereotypedMethod(MethodDefinition method)
+        {
             this._method = method;
-            if(this._method.ProgrammingLanguage == Language.CSharp) {
+            if (this._method.ProgrammingLanguage == Language.CSharp)
+            {
                 this._ruleCollector = new CSharpMethodRuleCollector();
+            }
+            else if (this._method.ProgrammingLanguage == Language.Java)
+            {
+                this._ruleCollector = new CSharpMethodRuleCollector();
+
             }
             this.Analyze();
         }
@@ -49,7 +58,8 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Gets the method name
         /// </summary>
         /// <returns></returns>
-        public string GetMethodName() {
+        public string GetMethodName()
+        {
             return this.Analyzer.Method.Name;
         }
 
@@ -58,7 +68,8 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Get the class name
         /// </summary>
         /// <returns></returns>
-        public string GetClassName() {
+        public string GetClassName()
+        {
             return this.Analyzer.DeclaringClass.Name;
         }
 
@@ -67,10 +78,14 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Get the return type
         /// </summary>
         /// <returns></returns>
-        public string GetReturnType() {
-            if(Analyzer.ReturnType == null) {
+        public string GetReturnType()
+        {
+            if (Analyzer.ReturnType == null)
+            {
                 return "void";
-            } else {
+            }
+            else
+            {
                 return this.Analyzer.ReturnType.ToString();
             }
         }
@@ -80,7 +95,8 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Checks return type is bool or not
         /// </summary>
         /// <returns></returns>
-        public bool RTypeIsBoolean() {
+        public bool RTypeIsBoolean()
+        {
             return this.Analyzer.RTypeIsBoolean();
         }
 
@@ -89,7 +105,8 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Checks return type is void or not
         /// </summary>
         /// <returns></returns>
-        public bool RTypeIsVoid() {
+        public bool RTypeIsVoid()
+        {
             return this.Analyzer.RTypeIsVoid();
         }
 
@@ -98,7 +115,8 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Checks if the method is a constructor
         /// </summary>
         /// <returns></returns>
-        public bool IsConstructor() {
+        public bool IsConstructor()
+        {
             return this.Analyzer.IsConstructor;
         }
 
@@ -108,7 +126,8 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Checks if the method is a IsDestructor
         /// </summary>
         /// <returns></returns>
-        public bool IsDestructor() {
+        public bool IsDestructor()
+        {
             return this.Analyzer.IsDestructor;
         }
 
@@ -118,7 +137,8 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Checks if the returned type of the method is primitive
         /// </summary>
         /// <returns></returns>
-        public bool IsRetPrimitiveType() {
+        public bool IsRetPrimitiveType()
+        {
             return this.Analyzer.IsPrimitiveType(Analyzer.ReturnType);
         }
 
@@ -126,7 +146,8 @@ namespace WM.UnitTestScribe.Stereotype {
         /// <summary>
         /// returns Parameters
         /// </summary>
-        public IEnumerable<VariableDeclaration> GetParas() {
+        public IEnumerable<VariableDeclaration> GetParas()
+        {
             return this.Analyzer.Paras;
         }
 
@@ -135,15 +156,18 @@ namespace WM.UnitTestScribe.Stereotype {
         /// Returns the first type in the list
         /// </summary>
         /// <returns></returns>
-        public MethodStereotype GetPrimaryType() {
+        public MethodStereotype GetPrimaryType()
+        {
             return ListMatchedStereotypes.FirstOrDefault();
         }
 
         /// <summary>
         /// Applies the rules to the method
         /// </summary>
-        public void Analyze() {
-            if(this._method.ProgrammingLanguage == Language.CSharp) {
+        public void Analyze()
+        {
+            if (this._method.ProgrammingLanguage == Language.CSharp|| this._method.ProgrammingLanguage == Language.Java)
+            {
                 this.Analyzer = new CSharpMethodAnalyzer(_method);
                 ListMatchedStereotypes = _ruleCollector.ApplyRules(Analyzer);
             }

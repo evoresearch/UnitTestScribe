@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TeaCap.Propagation;
 using WM.UnitTestScribe.Summary;
 using WM.UnitTestScribe.TestCaseDetector;
 
@@ -23,6 +24,8 @@ namespace TeaCap.TestPropagator
             targetProject = trgtProject;
             srcMLexeLocation = srcMLLocation;
             missingTestCases = new HashSet<TestCaseID>();
+            sourceTestSummary = new HashSet<TestCaseSummary>();
+            targetTestSummary = new HashSet<TestCaseSummary>();
 
 
         }
@@ -108,12 +111,28 @@ namespace TeaCap.TestPropagator
                     Console.WriteLine("{0,10:N0} methods", globalNamespace.GetDescendants<MethodDefinition>().Count());
                     //Console.Read();
                     var methods = globalNamespace.GetDescendants<MethodDefinition>();
+
+                    ////print test cases
+                    //StreamWriter wt = File.AppendText(@"C:\testpropagation\clones\testCases.csv");
+                    //wt.WriteLine($"nameSpaceName;className;methodName");
+                    //wt.Flush();
+                    //foreach(TestCaseID id in projectTestCases)
+                    //{
+                    //    wt.WriteLine($"{id.NamespaceName};{id.ClassName};{id.MethodName}");
+                    //    wt.Flush();
+                    //}
+                    //wt.Close();
+                    ////print methods
+                    //StreamWriter w = File.AppendText(@"C:\testpropagation\clones\budMethods.csv");
+                    //w.WriteLine($"nameSpaceName;className;methodName");
+                    //w.Flush();
+
                     int i = 0;
                     // Step 2.   Testing
-                    Console.WriteLine("======  analysing methods and identifying test-case methods ========= ");
+                    Console.WriteLine("\n======  analysing methods and identifying UUTs ========= ");
                     foreach (MethodDefinition method in methods)
                     {
-                        Console.WriteLine("Method Name : {0}", method.GetFullName());
+                        
                         //colect basic ID information
                         var declaringClass = method.GetAncestors<TypeDefinition>().FirstOrDefault();
                         var className = "";
@@ -121,11 +140,14 @@ namespace TeaCap.TestPropagator
                         {
                             className = declaringClass.Name;
                         }
-                        var nameSpaceName = GetNamespaceByMethod(method);
- 
-                        if (IsTestCase(method, projectTestCases))
-                        {
+                        var nameSpaceName = Utilities.GetNamespaceByMethod(method);
+                        //w.WriteLine($"{nameSpaceName};{className};{method.Name}");
+                        //w.Flush();
+                        //continue;
 
+                        if (Utilities.IsTestCase(method, projectTestCases))
+                        {
+                            //Console.WriteLine("Method Name : {0}", method.GetFullName());
                             SwumSummary swumSummary = new SwumSummary(method);
                             swumSummary.BasicSummary();
                             TestCaseAnalyzer analyzer = new TestCaseAnalyzer(method);
@@ -140,7 +162,46 @@ namespace TeaCap.TestPropagator
                             tcSummary.MethodName = method.Name;
 
                             projectTestSummary.Add(tcSummary);
-                            var stmts = method.GetDescendants<Statement>();
+                            
+                            Dictionary<Statement, List<Statement>> focalToAssert = Utilities.GetFocalToAssert(analyzer.ListAssertInfo);
+                            if (focalToAssert != null && focalToAssert.Count > 0)
+                            {
+                                foreach (Statement statement in focalToAssert.Keys)
+                                {
+                                  Utilities.printMethodDetails(method, className, nameSpaceName, statement);
+                                
+                                }
+                            }
+                            else
+                            {
+                                //print all methods in asserts
+                                foreach (AssertSTInfo info in analyzer.ListAssertInfo)
+                                {
+                                    Utilities.printMethodDetails(method, className, nameSpaceName, info.AssertStatment);
+                                }
+                            }
+                            //Console.WriteLine(tcSummary.GetBodyDescriptions());
+                            //var stmts = method.GetDescendants<Statement>();
+                            //Console.WriteLine($"===Printing local methods tested by {method.GetFullName()}===");
+                            //HashSet<MethodDefinition> local = analyzer.InvokedLocalMethods;
+                            //foreach(MethodDefinition definition in local)
+                            //{
+                            //    if (definition == null)
+                            //    {
+                            //        continue;
+                            //    }
+                            //    Console.WriteLine(definition.GetFullName());
+                            //}
+                            //Console.WriteLine($"===Printing external methods tested by {method.GetFullName()}===");
+                            //HashSet<MethodDefinition> external = analyzer.InvokedExternalMethods;
+                            //foreach (MethodDefinition definition in external)
+                            //{
+                            //    if (definition == null)
+                            //    {
+                            //        continue;
+                            //    }
+                            //    Console.WriteLine(definition.GetFullName());
+                            //}
 
                             //delete me
                             //using (StreamWriter sw = File.AppendText(@"D:\d.csv"))
@@ -154,7 +215,7 @@ namespace TeaCap.TestPropagator
 
 
                     }
-
+                    //w.Close();
 
                 }
                 finally
@@ -168,51 +229,6 @@ namespace TeaCap.TestPropagator
 
         }
 
-        private bool IsTestCase(MethodDefinition md, HashSet<TestCaseID> projectTestCases)
-        {
-            var declaringClass = md.GetAncestors<TypeDefinition>().FirstOrDefault();
-            string nameSpace = GetNamespaceByMethod(md);
-
-
-            if (declaringClass == null || nameSpace == null)
-            {
-                return false;
-            }
-            foreach (var id in projectTestCases)
-            {
-                //Console.WriteLine("namespace id : " + id.NamespaceName + "namespace : " + nameSpace);
-                if (id.MethodName == md.Name && id.ClassName == declaringClass.Name && id.NamespaceName == nameSpace)
-                {
-                    return true;
-                }
-
-            }
-            return false;
-
-        }
-
-
-        private string GetNamespaceByMethod(MethodDefinition md)
-        {
-            var allNameSpace = md.GetAncestors<NamespaceDefinition>();
-            string nameSpace = "";
-            foreach (var ns in allNameSpace)
-            {
-                if (ns.Name == "")
-                {
-                    continue;
-                }
-                if (nameSpace == "")
-                {
-                    nameSpace += ns.Name;
-                }
-                else
-                {
-                    nameSpace = ns.Name + "." + nameSpace;
-                }
-
-            }
-            return nameSpace;
-        }
+        
     }
 }
