@@ -71,8 +71,11 @@ namespace WM.UnitTestScribe {
                 }
             } else if (invokedVerb == "summary") {
                 var SummaryOp = (SummarizeTestOptions)invokedVerbOptions;
-                ProjectCloner projectCloner = new ProjectCloner(SrcmlLoc);
-                projectCloner.cloneRepos();
+                //ProjectCloner projectCloner = new ProjectCloner(SrcmlLoc);
+                //projectCloner.cloneRepos();
+
+                DataAnalyzer dataAnalyzer = new DataAnalyzer();
+                dataAnalyzer.CountEcoSystems();
                 //TestPropagator testPropagator = new TestPropagator(LocalProj, targetProject, SrcmlLoc);
                 //testPropagator.propagate();
                 //var summary = new SummaryGenerator(SummaryOp.LocationsPath, SummaryOp.SrcMLPath);

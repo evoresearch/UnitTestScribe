@@ -31,6 +31,7 @@ namespace WM.UnitTestScribe.TestCaseDetector
         readonly public string TempDir;
         private string annotationPattern;
         private string[] testCaseAnnotationNames;
+        private string testAnnotations;
 
 
         /// <summary>
@@ -47,6 +48,7 @@ namespace WM.UnitTestScribe.TestCaseDetector
             this.AllTestCases = new HashSet<TestCaseID>();
             annotationPattern = ConfigurationManager.AppSettings["testCaseAnnotationPattern"].ToString().ToLower();
             testCaseAnnotationNames = ConfigurationManager.AppSettings["testCaseAnnotationNames"].ToString().Split(',');
+            testAnnotations = ConfigurationManager.AppSettings["testCaseAnnotationNames"];
         }
 
 
@@ -195,7 +197,7 @@ namespace WM.UnitTestScribe.TestCaseDetector
                 foreach (var name in names)
                 {
                     string curName = name.Value;
-                    if (testCaseAnnotationNames.Contains(curName))
+                    if (testAnnotations.Contains(curName))
                     {
                         return true;
                     }

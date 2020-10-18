@@ -77,32 +77,38 @@ namespace TeaCap.GitMining
             string testCasesFile = ConfigurationManager.AppSettings["testsAndUUTFile"];
             string classesAndMethodsFile = ConfigurationManager.AppSettings["classesAndMethodsFile"];
 
-            if (commands.ToLower().Contains("testdetect"))
+            //if (commands.ToLower().Contains("testdetect"))
+            //{
+            //    //test cases file
+            //    if (File.Exists(testCasesFile))
+            //    {
+            //        File.Delete(testCasesFile);
+            //    }
+            //    StreamWriter writer = File.AppendText(testCasesFile);
+            //    writer.WriteLine("project;parent;projectIsFork;testPackage;testClassName;testMethodName;testMethodParameters;uutPackage;uutClassName;uutMethodName;uutMethodParameters");
+            //    writer.Flush();
+            //    writer.Close();
+            //all clases and methods file
+            if (commands.ToLower().Contains("testdetect")) { 
+            if (File.Exists(classesAndMethodsFile))
             {
-                //test cases file
-                if (File.Exists(testCasesFile))
-                {
-                    File.Delete(testCasesFile);
-                }
-                StreamWriter writer = File.AppendText(testCasesFile);
-                writer.WriteLine("project;parent;projectIsFork;testPackage;testClassName;testMethodName;testMethodParameters;uutPackage;uutClassName;uutMethodName;uutMethodParameters");
-                writer.Flush();
-                writer.Close();
-                //all clases and methods file
-                if (File.Exists(classesAndMethodsFile))
-                {
-                    File.Delete(classesAndMethodsFile);
-                }
-                writer = File.AppendText(classesAndMethodsFile);
-                writer.WriteLine("project;parent;projectIsFork;package;className;methodName;methodParameters");
-                writer.Flush();
-                writer.Close();
+                File.Delete(classesAndMethodsFile);
             }
-             
+            StreamWriter writer = File.AppendText(classesAndMethodsFile);
+            writer.WriteLine("project;parent;projectIsFork;package;className;methodName;methodParameters");
+            writer.Flush();
+            writer.Close();
+        }
+            //string[] doneProjects = new string[] { "LineageOS/android_packages_apps_Contacts", "LightningFastRom/android_packages_apps_Contacts", "sdhz152/android_packages_apps_Contacts", "Michenux/YourAppIdea", "wendersonferreira/YourAppIdea", "friederbluemle/YourAppIdea", "PatilShreyas/MaterialDialog-Android", "tetrapi/MaterialDialog-Android", "xuexiangjys/TemplateAppProject", "myie9/TemplateAppProject", "badoo/Chateau", "wiyarmir/Chateau", "segler-alex/RadioDroid", "kar10s/RadioDroid", "morckx/RadioDroid", "werman/RadioDroid", "robotmedia/AndroidBillingLibrary", "masconsult/AndroidBillingLibrary", "guetux/AndroidBillingLibrary", "hpique/AndroidBillingLibrary", "serso/android-billing", "azhon/AppUpdate", "hongyantao/AppUpdate", "burgessjp/ThemeSkinning", "humanheima/ThemeSkinning", "msdx/ThemeSkinning", "athkalia/Just-Another-Android-App", "MaTriXy/Just-Another-Android-App", "segmentio/analytics-android", "friederbluemle/analytics-android", "super-collider/analytics-android", "TorreyKahuna/analytics-android", "rayleeriver/analytics-android", "amplitude/analytics-android", "google/bundletool" };
+            string[] finalProjects = File.ReadAllLines(@"C:\testpropagation\clones\finalProjects.txt");
             try
             {
                 foreach (string project in projects)
                 {
+                    if (!finalProjects.Contains(project))
+                    {
+                        continue;
+                    }
                     //string projectSHortName = project.Split('/')[1];
                     string projectFolder = string.Format($"{folderName}\\{project.Replace("/", "\\")}");
                     string cloneURL = string.Format($"https://github.com/{project}.git");
@@ -133,10 +139,10 @@ namespace TeaCap.GitMining
                     {
                         try
                         {
-                            
-                            TestCaseDetector testCaseDetector = new TestCaseDetector(projectFolder, srcMLLocation);
-                            testCaseDetector.AnalyzeTestCases();
-                            HashSet<TestCaseID> allTestCases = testCaseDetector.AllTestCases;
+
+                            //TestCaseDetector testCaseDetector = new TestCaseDetector(projectFolder, srcMLLocation);
+                            //testCaseDetector.AnalyzeTestCases();
+                            HashSet<TestCaseID> allTestCases = null;// testCaseDetector.AllTestCases;
                             HashSet<TestCaseSummary> projectTestSummary = new HashSet<TestCaseSummary>();
                             //projct parent
                             ForkedRepo repo = forkedRepos.FirstOrDefault(f => f.ForkName == project);

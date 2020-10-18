@@ -175,14 +175,13 @@ namespace TeaCap.Propagation
 
         private static void printMethod(StreamWriter classesWriter,string projectGitName, string parent, bool isFork, string package,string className, MethodDefinition method)
         {
-            var parameters = from vars in method.Parameters
-                     select vars.Name;
-            classesWriter.WriteLine($"{projectGitName};{parent};{isFork};{package};{className};{method.Name};{parameters}");
+           
+            classesWriter.WriteLine($"{projectGitName};{parent};{isFork};{package};{className};{method.Name};{method}");
             classesWriter.Flush();
         }
         public static void analyzeProjectTestCases(string projectLocation, HashSet<TestCaseID> projectTestCases, HashSet<TestCaseSummary> projectTestSummary, string srcMLexeLocation,string testsAndUUTFile,string classesAndMethodsFile,string projectGitName,string parent,bool isFork)
         {
-            Console.WriteLine($"Analysing project {Path.GetFileName(projectLocation)}");
+            Console.WriteLine($"Analysing project {projectGitName}");//Path.GetFileName(projectLocation)
 
             using (var project = new DataProject<CompleteWorkingSet>(projectLocation, projectLocation, srcMLexeLocation))
             {
@@ -190,7 +189,7 @@ namespace TeaCap.Propagation
                 NamespaceDefinition globalNamespace;
                 project.WorkingSet.TryObtainReadLock(5000, out globalNamespace);
                 StreamWriter classesWriter = File.AppendText(classesAndMethodsFile);
-                StreamWriter testsWriter = File.AppendText(testsAndUUTFile);
+                StreamWriter testsWriter = null;// File.AppendText(testsAndUUTFile);
                 try
                 {
 
@@ -199,10 +198,24 @@ namespace TeaCap.Propagation
                     Console.WriteLine("{0,10:N0} files", project.Data.GetFiles().Count());
                     Console.WriteLine("{0,10:N0} namespaces/packages", globalNamespace.GetDescendants<NamespaceDefinition>().Count());
                     Console.WriteLine("{0,10:N0} types", globalNamespace.GetDescendants<TypeDefinition>().Count());
-                    Console.WriteLine("{0,10:N0} methods", globalNamespace.GetDescendants<MethodDefinition>().Count());
+                    int total = globalNamespace.GetDescendants<MethodDefinition>().Count();
+                    Console.WriteLine("{0,10:N0} methods",total);
                     //Console.Read();
                     var methods = globalNamespace.GetDescendants<MethodDefinition>();
                     int i = 0;
+                    foreach(MethodDefinition method in methods)
+                    {
+                        var declaringClass = method.GetAncestors<TypeDefinition>().FirstOrDefault();
+                        var className = "";
+                        if (declaringClass != null)
+                        {
+                            className = declaringClass.Name;
+                        }
+                        var nameSpaceName = Utilities.GetNamespaceByMethod(method);
+                        printMethod(classesWriter, projectGitName, parent, isFork, nameSpaceName, className, method);
+                        Console.WriteLine($"{++i}/{total}");
+                    }
+                    return;
                     // Step 2.   Testing
                     Console.WriteLine("\n======  analysing methods and identifying UUTs ========= ");
                     foreach (MethodDefinition method in methods)
@@ -217,6 +230,7 @@ namespace TeaCap.Propagation
                         }
                         var nameSpaceName = Utilities.GetNamespaceByMethod(method);
                         printMethod(classesWriter, projectGitName,parent,isFork, nameSpaceName, className, method);
+                       
 
                         if (Utilities.IsTestCase(method, projectTestCases))
                         {
@@ -296,8 +310,9 @@ namespace TeaCap.Propagation
                             //    sw.Close();
                             //}	
                             i++;
+                           
                         }
-
+                        Console.WriteLine($"{i}/{total}");
 
                     }
 
@@ -305,8 +320,14 @@ namespace TeaCap.Propagation
                 }
                 finally
                 {
-                    classesWriter.Close();
-                    testsWriter.Close();
+                    if (classesWriter != null)
+                    {
+                        classesWriter.Close();
+                    }
+                    if (testsWriter != null)
+                    {
+                        testsWriter.Close();
+                    }
                     project.WorkingSet.ReleaseReadLock();
                 }
 
