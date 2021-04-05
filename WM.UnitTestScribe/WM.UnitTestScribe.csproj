@@ -81,6 +81,7 @@
     <Compile Include="DataAnalysis\PresenceQuartile.cs" />
     <Compile Include="DataAnalysis\PresenceType.cs" />
     <Compile Include="DataAnalysis\TestCasePresence.cs" />
+    <Compile Include="DataAnalysis\UUTTestCaseMatch.cs" />
     <Compile Include="GitMining\DataAnalyzer.cs" />
     <Compile Include="GitMining\ForkedRepo.cs" />
     <Compile Include="GitMining\MainRepo.cs" />

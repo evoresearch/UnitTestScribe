@@ -75,7 +75,10 @@ namespace WM.UnitTestScribe {
                 //projectCloner.cloneRepos();
 
                 DataAnalyzer dataAnalyzer = new DataAnalyzer();
-                dataAnalyzer.CountEcoSystems();
+                //dataAnalyzer.CountEcoSystems();
+                dataAnalyzer.CreateMappingOfMissingTestCases();
+                
+                
                 //TestPropagator testPropagator = new TestPropagator(LocalProj, targetProject, SrcmlLoc);
                 //testPropagator.propagate();
                 //var summary = new SummaryGenerator(SummaryOp.LocationsPath, SummaryOp.SrcMLPath);
